@@ -1,12 +1,8 @@
 {
-	"size":"1/3",
+	"size":0.3333,
 	"background":{
 		"type":"plain",
-		"value":{
-			"r":100,
-			"g":220,
-			"b":100
-		}
+		"value":"random"
 	},
 	"title":{
 		"type" : "text",
@@ -14,7 +10,7 @@
 	},
 	"buttonlayout":"1x2",
 	"buttons":[
-		{"image1":"button1.png", "image2":"button2.png"},
-		{"image1":"button1.png", "image2":"button2.png"}
+		{"w":200, "h":100, "image1":"button1.png", "image2":"button2.png"},
+		{"w":200, "h":100, "image1":"button1.png", "image2":"button2.png"}
 	]
 }

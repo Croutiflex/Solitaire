@@ -10,6 +10,10 @@ def isOutOfScreen(pos):
 def randomColor(low=0, high=255):
 	return pg.Color(random.randint(low,high), random.randint(low,high), random.randint(low,high))
 
+# renvoie la couleur opposée à la couleur donnée
+def negativeColor(c : pg.Color):
+	return pg.Color(255-c.r, 255-c.g, 255-c.b, 255-c.a)
+
 class BasicSprite(pg.sprite.Sprite):
 	def __init__(self,image,layer=0,pos=(0,0)):
 		pg.sprite.Sprite.__init__(self)
@@ -98,7 +102,6 @@ class Point(pg.sprite.Sprite):
 # bouton avec 2 images (survolé ou pas)
 class Button(BasicSprite):
 	def __init__(self, path1, path2, size, pos=(0,0)):
-		pg.sprite.Sprite.__init__(self)
 		self.imgOn = pg.transform.smoothscale(pg.image.load(path2), size)
 		self.imgOff = pg.transform.smoothscale(pg.image.load(path1), size)
 		self.isSelected = False

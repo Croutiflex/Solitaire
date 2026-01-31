@@ -6,11 +6,12 @@ from menus import *
 def main():
 
 	pg.init()
+	pg.font.init()
 	screen = pg.display.set_mode(screenSize, pg.SCALED | pg.FULLSCREEN)
 	running = True
 	clock = pg.time.Clock()
 
-	mode = "game"
+	mode = "menu"
 	game = Solitaire()
 	menu = StandardMenu("endmenu.json")
 
@@ -41,7 +42,15 @@ def main():
 				game.update()
 				game.draw(screen)
 			case "menu":
-				running = False
+				for event in pg.event.get():
+					match event.type:
+						case pg.KEYDOWN:
+							match event.key:
+								case pg.K_ESCAPE:
+									running = False
+				menu.update()
+				menu.draw(screen)
+
 		pg.display.flip()
 		clock.tick(maxFramerate)
 
