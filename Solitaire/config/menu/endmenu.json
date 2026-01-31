@@ -1,0 +1,20 @@
+{
+	"size":"1/3",
+	"background":{
+		"type":"plain",
+		"value":{
+			"r":100,
+			"g":220,
+			"b":100
+		}
+	},
+	"title":{
+		"type" : "text",
+		"value" : "My Menu"
+	},
+	"buttonlayout":"1x2",
+	"buttons":[
+		{"image1":"button1.png", "image2":"button2.png"},
+		{"image1":"button1.png", "image2":"button2.png"}
+	]
+}
