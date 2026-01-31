@@ -1,0 +1,11 @@
+Fonctionnalités à implémenter
+
+must have:
+- cascade de victoire
+- Son
+- menu fin/rejouer
+- menu pause & choix apparence
+	- sauvegarde dernière apparence
+
+could have:
+- sauvegarde
