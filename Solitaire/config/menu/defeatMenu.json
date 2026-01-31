@@ -1,0 +1,16 @@
+{
+	"size":0.3333,
+	"background":{
+		"type":"plain",
+		"value":{"r":255, "g":0, "b":0}
+	},
+	"title":{
+		"type" : "text",
+		"value" : "Perdu!"
+	},
+	"buttonlayout":"1x2",
+	"buttons":[
+		{"name":"rejouer", "w":200, "h":100, "image1":"replay.png", "image2":"button2.png"},
+		{"name":"quitter", "w":200, "h":100, "image1":"exit.png", "image2":"button2.png"}
+	]
+}

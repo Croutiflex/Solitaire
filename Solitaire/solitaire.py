@@ -19,6 +19,7 @@ class Solitaire():
 	def __init__(self):
 		self.backgroundColor = randomColor(high=200)
 		self.cheatEnabled = False
+		self.isWon = False
 		for c in allCards:
 			c.hide()
 			c._layer = 0
@@ -134,6 +135,7 @@ class Solitaire():
 			for p in self.hiddenPiles:
 				if len(p) > 0:
 					return False
+			self.isWon = True
 			return True
 
 	def pioche(self):

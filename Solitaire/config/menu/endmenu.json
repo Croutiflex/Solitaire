@@ -10,7 +10,7 @@
 	},
 	"buttonlayout":"1x2",
 	"buttons":[
-		{"w":200, "h":100, "image1":"button1.png", "image2":"button2.png"},
-		{"w":200, "h":100, "image1":"button1.png", "image2":"button2.png"}
+		{"name":"rejouer", "w":200, "h":100, "image1":"button1.png", "image2":"button2.png"},
+		{"name":"quitter", "w":200, "h":100, "image1":"button1.png", "image2":"button2.png"}
 	]
 }

@@ -11,9 +11,11 @@ def main():
 	running = True
 	clock = pg.time.Clock()
 
-	mode = "menu"
+	mode = "game"
 	game = Solitaire()
-	menu = StandardMenu("endmenu.json")
+	menuV = StandardMenu("victoryMenu.json")
+	menuL = StandardMenu("defeatMenu.json")
+	activeMenu = None
 
 	while running:
 		match mode:
@@ -29,12 +31,16 @@ def main():
 								case 3:
 									if game.rightClick():
 										mode = "menu"
+							if mode == "menu":
+								activeMenu = menuV if game.isWon else menuL
 						case pg.MOUSEBUTTONUP:
-							game.leftRelease()
+							match event.button:
+								case 1:
+									game.leftRelease()
 						case pg.KEYDOWN:
 							match event.key:
 								case pg.K_ESCAPE:
-									mode = "menu"
+									running = False
 								case pg.K_BACKSPACE:
 									game = Solitaire()
 								case pg.K_TAB:
@@ -44,12 +50,21 @@ def main():
 			case "menu":
 				for event in pg.event.get():
 					match event.type:
+						case pg.MOUSEBUTTONDOWN:
+							match event.button:
+								case 1:
+									match activeMenu.click():
+										case "rejouer":
+											game = Solitaire()
+											mode = "game"
+										case "quitter":
+											running = False
 						case pg.KEYDOWN:
 							match event.key:
 								case pg.K_ESCAPE:
 									running = False
-				menu.update()
-				menu.draw(screen)
+				activeMenu.update()
+				activeMenu.draw(screen)
 
 		pg.display.flip()
 		clock.tick(maxFramerate)

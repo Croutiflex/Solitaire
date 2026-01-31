@@ -13,7 +13,7 @@ class StandardMenu():
 		# background
 		bgconfig = menu["background"]
 		w, h = W*menu["size"], H*menu["size"]
-		bgcolor : "black"
+		bgcolor : pg.Color("black")
 		match bgconfig["type"]:
 			case "plain":
 				bgcolor = randomColor(high=200) if bgconfig["value"] == "random" else pg.Color(bgconfig["value"]["r"], bgconfig["value"]["g"], bgconfig["value"]["b"])
@@ -33,12 +33,13 @@ class StandardMenu():
 		tmp = menu["buttonlayout"].split("x")
 		n, m = int(tmp[0]), int(tmp[1])
 		x, y = bg.rect.left, bg.rect.top + h/5
-		w2, h2 = w/(n+1), h*0.8/(m+1)
-		buttonPos = [[(x+w2*j, y+h2*i) for j in range(m)] for i in range(n)]
+		w2, h2 = w/(m+1), h*0.8/(n+1)
+		buttonPos = [[(x+w2*(j+1), y+h2*(i+1)) for j in range(m)] for i in range(n)]
+		print(buttonPos)
 		self.buttons = []
 		i, j = 0, 0
 		for b in menu["buttons"]:
-			button = Button(menuResPath+b["image1"], menuResPath+b["image2"], (b["w"], b["h"]))
+			button = Button(menuResPath+b["image1"], menuResPath+b["image2"], (b["w"], b["h"]), name=b["name"])
 			button.moveCenter(buttonPos[i][j])
 			self.buttons.append(button)
 			self.drawables.add(button)
@@ -47,8 +48,14 @@ class StandardMenu():
 				i += 1
 				j = 0
 
+	# renvoie le nom du bouton qui a été cliqué, None si aucun
+	def click(self):
+		for b in self.buttons:
+			if b.isSelected:
+				return b.name
+
 	def update(self):
-		pass
+		self.drawables.update()
 
 	def draw(self, screen):
 		self.drawables.draw(screen)

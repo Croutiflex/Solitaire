@@ -101,9 +101,10 @@ class Point(pg.sprite.Sprite):
 
 # bouton avec 2 images (survolé ou pas)
 class Button(BasicSprite):
-	def __init__(self, path1, path2, size, pos=(0,0)):
+	def __init__(self, path1, path2, size, pos=(0,0), name="default"):
 		self.imgOn = pg.transform.smoothscale(pg.image.load(path2), size)
 		self.imgOff = pg.transform.smoothscale(pg.image.load(path1), size)
+		self.name = name
 		self.isSelected = False
 		super().__init__(self.imgOff, pos=pos)
 	def update(self):
