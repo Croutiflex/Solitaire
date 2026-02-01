@@ -32,6 +32,9 @@ class Solitaire():
 		self.piles = [CardPile3("normal", p, offset=(0, space2)) for p in pilePos]
 		self.acePiles = [CardPile4("ace", p) for p in acePilePos]
 		self.activePiles = self.acePiles + self.piles
+		# sons
+		self.sounds = [pg.mixer.Sound(soundResPath+"carte"+str(i)+".wav") for i in range(1,10)]
+		self.playlist1 = [self.sounds[1], self.sounds[2], self.sounds[3]]
 		# détection de la défaite
 		self.noMoreDeckMoves = False
 		self.lastDeckLen = len(self.deck)
@@ -67,6 +70,7 @@ class Solitaire():
 		def onDone():
 			self.piles[0].add(self.movingCard)
 			self.movingCard = None
+			playRandomSound(self.playlist1)
 		self.movingCard.animate(self.piles[0].nextCardPos, onDone)
 		# pour le déplacement des cartes
 		self.pileUnderMouse = None
@@ -161,6 +165,7 @@ class Solitaire():
 			self.reserve += self.hand.cards
 			self.hand.empty()
 			# piocher n cartes
+			self.sounds[8].play()
 			for i in range(min(3, len(self.deck))):
 				c = self.deck.pick()
 				c.show()
@@ -178,6 +183,7 @@ class Solitaire():
 		self.movingPile = self.pileUnderMouse.pickSelected()
 		if self.movingPile == None:
 			return False
+		self.sounds[6].play()
 		self.movingPile.followMouse()
 		self.originPile = self.pileUnderMouse
 		return False
@@ -187,6 +193,7 @@ class Solitaire():
 			return
 		if self.pileUnderMouse != None and self.pileUnderMouse != self.originPile and self.isMoveAllowed(self.movingPile, self.pileUnderMouse):
 			# on pose les cartes sur la nouvelle pile
+			self.sounds[1].play()
 			for c in self.movingPile.cards:
 				self.pileUnderMouse.add(c)
 			if self.originPile.type == "normal" and len(self.originPile) == 0: # découvrir une carte si la pile d'origine (non as) est vide
@@ -232,6 +239,7 @@ class Solitaire():
 		# sort moves?
 		for dest in moves: # Execute first move
 			self.movingCard = A.pick()
+			self.sounds[0].play()
 			if A.type == "normal" and len(A) == 0: # découvrir une carte si la pile d'origine (non as) est vide
 				self.discover(A)
 			elif A.type == "hand":
@@ -272,11 +280,13 @@ class Solitaire():
 							def f1():
 								self.piles[self.dealB].add(self.movingCard)
 								self.movingCard = None
+								playRandomSound(self.playlist1)
 							self.movingCard.animate(self.piles[self.dealB].nextCardPos, f1)
 						else:
 							def f2():
 								self.hiddenPiles[self.dealB].add(self.movingCard)
 								self.movingCard = None
+								playRandomSound(self.playlist1)
 							self.movingCard.animate(self.hiddenPiles[self.dealB].nextCardPos, f2)
 				else:
 					self.movingCard.update()

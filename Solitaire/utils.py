@@ -14,6 +14,9 @@ def randomColor(low=0, high=255):
 def negativeColor(c : pg.Color):
 	return pg.Color(255-c.r, 255-c.g, 255-c.b, 255-c.a)
 
+def playRandomSound(soundList):
+	soundList[random.randint(0,len(soundList)-1)].play()
+
 class BasicSprite(pg.sprite.Sprite):
 	def __init__(self,image,layer=0,pos=(0,0)):
 		pg.sprite.Sprite.__init__(self)

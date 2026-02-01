@@ -7,6 +7,7 @@ def main():
 
 	pg.init()
 	pg.font.init()
+	pg.mixer.init()
 	screen = pg.display.set_mode(screenSize, pg.SCALED | pg.FULLSCREEN)
 	running = True
 	clock = pg.time.Clock()

@@ -45,3 +45,4 @@ END = 2
 menuConfigPath = "config/menu/"
 cardsFolder = "res/cards/"
 menuResPath = "res/menu/"
+soundResPath = "res/sound/"
