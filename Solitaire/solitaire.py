@@ -173,20 +173,18 @@ class Solitaire():
 
 	# renvoie True si la partie est terminée
 	def leftClick(self):
-		if self.phase == 2:
-			return True
 		if self.pileUnderMouse == None or self.phase != GAME:
-			return False
+			return
 		if self.pileUnderMouse.type == "deck":
 			self.pioche()
-			return False
+			return
 		self.movingPile = self.pileUnderMouse.pickSelected()
 		if self.movingPile == None:
-			return False
+			return
 		self.sounds[6].play()
 		self.movingPile.followMouse()
 		self.originPile = self.pileUnderMouse
-		return False
+		return
 
 	def leftRelease(self):
 		if self.phase != GAME or self.movingPile == None:
@@ -212,26 +210,24 @@ class Solitaire():
 
 	# renvoie True si la partie est terminée
 	def rightClick(self):
-		if self.phase == 2:
-			return True
 		if self.pileUnderMouse == None or self.phase != GAME or self.movingCard != None:
-			return False
+			return
 		dummyPile = CardPile2("dummy", (0,0))
 		A = self.pileUnderMouse
 		if len(A) == 0:
-			return False
+			return
 		match A.type:
 			case "deck":
-				return False
+				return
 			case "normal":
 				L = A.peekSelection()
 				if len(L) != 1:
-					return False
+					return
 				dummyPile.add(L[0], updatePos=True)
 			case _:
 				dummyPile.add(A.getNext(), updatePos=True)
 				if len(dummyPile) == 0:
-					return False
+					return
 		moves = []
 		for B in self.activePiles:
 			if B != A and self.isMoveAllowed(dummyPile, B):
@@ -253,8 +249,8 @@ class Solitaire():
 				dest.add(self.movingCard)
 				self.movingCard = None
 			self.movingCard.animate(dest.nextCardPos, onDone=f1, duration=slideTime2)
-			return False
-		return False
+			return
+		return
 
 	def discover(self, pile):
 		hp = self.hiddenPiles[self.piles.index(pile)]

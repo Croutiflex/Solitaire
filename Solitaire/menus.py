@@ -39,7 +39,7 @@ class StandardMenu():
 		self.buttons = []
 		i, j = 0, 0
 		for b in menu["buttons"]:
-			button = Button(menuResPath+b["image1"], menuResPath+b["image2"], (b["w"], b["h"]), name=b["name"])
+			button = Button(menuResPath+b["image1"], menuResPath+b["image2"], (scaleRatio*b["w"], scaleRatio*b["h"]), name=b["name"])
 			button.moveCenter(buttonPos[i][j])
 			self.buttons.append(button)
 			self.drawables.add(button)

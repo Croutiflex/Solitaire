@@ -2,8 +2,10 @@ import pygame as pg
 
 # constantes
 maxFramerate = 60
-W = 1920
-H = 1080
+scaleRatio = 0.6
+W = 1920*scaleRatio
+H = 1080*scaleRatio
+scaleRatio = W/1920
 screenSize = (W, H)
 midx = W/2
 midy = H/2
@@ -11,17 +13,17 @@ midScreen = (midx, midy)
 cardRatio = 192/128 # h/w
 slideTime1 = 0.1
 slideTime2 = 0.3
-space1 = 20
-space2 = 50
-space3 = 75
-space4 = 150
-space5 = 5
+space1 = 20*scaleRatio
+space2 = 50*scaleRatio
+space3 = 75*scaleRatio
+space4 = 150*scaleRatio
+space5 = 5*scaleRatio
 screenBottom = H - space1
 backgroundColor = (100, 220, 100)
 white = pg.Color(255, 255, 255, 255)
 
 # texte
-fontSize1 = 50
+fontSize1 = int(50*scaleRatio)
 font1 = 'freesansbold.ttf'
 
 # dimensions

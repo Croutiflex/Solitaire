@@ -9,6 +9,7 @@ def main():
 	pg.font.init()
 	pg.mixer.init()
 	screen = pg.display.set_mode(screenSize, pg.SCALED | pg.FULLSCREEN)
+	screen = pg.display.set_mode(screenSize)
 	running = True
 	clock = pg.time.Clock()
 
@@ -27,12 +28,11 @@ def main():
 						case pg.MOUSEBUTTONDOWN:
 							match event.button:
 								case 1:
-									if game.leftClick():
-										mode = "menu"
+									game.leftClick()
 								case 3:
-									if game.rightClick():
-										mode = "menu"
-							if mode == "menu":
+									game.rightClick()
+							if game.phase == 2:
+								mode = "menu"
 								activeMenu = menuV if game.isWon else menuL
 						case pg.MOUSEBUTTONUP:
 							match event.button:
