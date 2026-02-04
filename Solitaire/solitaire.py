@@ -17,7 +17,8 @@ allCards = [Card(i+1, back, cardSize) for i in range(52)]
 
 class Solitaire():
 	def __init__(self):
-		self.backgroundColor = randomColor(high=200)
+		# self.backgroundColor = randomColor(high=200)
+		self.background = pg.transform.smoothscale(pg.image.load("res/fond1.png"), screenSize)
 		self.cheatEnabled = False
 		self.isWon = False
 		for c in allCards:
@@ -301,7 +302,7 @@ class Solitaire():
 							self.pileUnderMouse = p
 
 	def draw(self, screen):
-		screen.fill(self.backgroundColor)
+		screen.blit(self.background, (0,0))
 		if self.pileUnderMouse == self.deck:
 			self.deckHL.draw(screen)
 		for p in self.acePiles + [self.hand, self.deck]:
