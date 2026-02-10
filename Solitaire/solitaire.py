@@ -36,6 +36,8 @@ class Solitaire():
 		# sons
 		self.sounds = [pg.mixer.Sound(soundResPath+"carte"+str(i)+".wav") for i in range(1,10)]
 		self.playlist1 = [self.sounds[1], self.sounds[2], self.sounds[3]]
+		self.defeatSound = pg.mixer.Sound(soundResPath+"pwapwa.wav")
+		self.victorySound = pg.mixer.Sound(soundResPath+"tinting.wav")
 		# détection de la défaite
 		self.noMoreDeckMoves = False
 		self.lastDeckLen = len(self.deck)
@@ -147,11 +149,13 @@ class Solitaire():
 		# print("deck : ", len(self.deck), ", réserve : ", len(self.reserve), ", main : ", len(self.hand))
 		if self.checkVictory():
 			print("Victoire!")
+			self.victorySound.play()
 			self.phase = 2
 			return
 		if len(self.deck) == 0 and len(self.hand) == 0:
 			if self.checkDefeat(self.lastDeckLen == len(self.reserve)):
 				print("Game Over!")
+				self.defeatSound.play()
 				self.phase = 2
 				return
 			# si la pioche et la main sont vides, remettre la réserve dans le deck
