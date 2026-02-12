@@ -149,8 +149,8 @@ class Solitaire():
 		# print("deck : ", len(self.deck), ", réserve : ", len(self.reserve), ", main : ", len(self.hand))
 		if self.checkVictory():
 			print("Victoire!")
-			self.victorySound.play()
 			self.phase = WIN
+			self.lastStackingPileIndex = 6
 			self.stackUp()
 			return
 		if len(self.deck) == 0 and len(self.hand) == 0:
@@ -188,20 +188,44 @@ class Solitaire():
 
 	# logique de rangement des cartes (animation victoire)
 	def stackUp(self):
-		if self.movingCard == None:
-			# stack next card
-			self.movingCard = self.nextStackingPile.pick()
-			# find next stacking move
-			i = self.piles.index(self.nextStackingPile) + 1
-			while True:
-				if i == 7:
-					i = 0
-				if len(self.piles[i]) > 0:
-					target = self.getAceTarget(self.piles[i].getNext())
-					if target != None:
-						self.nextStackingPile = self.piles[i]
-						self.nextStackingTarget = target
-				i += 1
+		# find next stacking move
+		nextStackingPile = None
+		nextStackingTarget = None
+		i = self.lastStackingPileIndex + 1
+		emptyPiles = set()
+		searching = True
+		nloops = 0
+		while searching:
+			if i == 7:
+				i = 0
+				nloops += 1
+				if nloops > 2:
+					print("This should not happen!")
+					searching = False
+			if len(self.piles[i]) > 0:
+				target = self.getAceTarget(self.piles[i].getNext())
+				if target != None: # next move found
+					nextStackingPile = self.piles[i]
+					nextStackingTarget = target
+					self.lastStackingPileIndex = i
+					searching = False
+			else:
+				if self.piles[i] not in emptyPiles:
+					emptyPiles.add(self.piles[i])
+					if len(emptyPiles) == 7: # stacking is done
+						searching = False
+			i += 1
+		# stack next card
+		if nextStackingPile == None: # fin de l'animation
+			self.victorySound.play()
+			self.phase = END
+			return
+		self.movingCard = nextStackingPile.pick()
+		def f():
+			nextStackingTarget.add(self.movingCard)
+			self.movingCard = None
+			playRandomSound(self.playlist1)
+		self.movingCard.animate(nextStackingTarget.pos, onDone=f, duration=slideTime3)
 
 	# renvoie True si la partie est terminée
 	def leftClick(self):
@@ -331,6 +355,11 @@ class Solitaire():
 					for p in self.activePiles + [self.hand]:
 						if p.update():
 							self.pileUnderMouse = p
+			case 2: # animation victoire
+				if self.movingCard != None:
+					self.movingCard.update()
+				else:
+					self.stackUp()
 
 	def draw(self, screen):
 		screen.blit(self.background, (0,0))

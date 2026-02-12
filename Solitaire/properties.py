@@ -13,6 +13,7 @@ midScreen = (midx, midy)
 cardRatio = 192/128 # h/w
 slideTime1 = 0.1
 slideTime2 = 0.3
+slideTime3 = 0.2
 space1 = 20*scaleRatio
 space2 = 50*scaleRatio
 space3 = 75*scaleRatio

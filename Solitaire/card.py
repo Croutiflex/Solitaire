@@ -224,8 +224,8 @@ class CardPile3(CardPile2): # pile avec déroulement et sélection multiple
 	def pick(self):
 		if len(self) == 1:
 			self.HL.moveCenter(self.cards[0].rect.center)
-			self.drawables.remove(self.HL)
 		c = super().pick()
+		self.drawables.remove(self.HL)
 		self.updateCollidables()
 		return c
 

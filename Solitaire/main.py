@@ -31,9 +31,6 @@ def main():
 									game.leftClick()
 								case 3:
 									game.rightClick()
-							if game.phase == 3:
-								mode = "menu"
-								activeMenu = menuV if game.isWon else menuL
 						case pg.MOUSEBUTTONUP:
 							match event.button:
 								case 1:
@@ -46,6 +43,9 @@ def main():
 									game = Solitaire()
 								case pg.K_TAB:
 									game.toggleCheat()
+				if game.phase == END:
+					mode = "menu"
+					activeMenu = menuV if game.isWon else menuL
 				game.update()
 				game.draw(screen)
 			case "menu":
