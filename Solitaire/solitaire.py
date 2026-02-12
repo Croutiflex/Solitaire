@@ -150,13 +150,14 @@ class Solitaire():
 		if self.checkVictory():
 			print("Victoire!")
 			self.victorySound.play()
-			self.phase = 2
+			self.phase = WIN
+			self.stackUp()
 			return
 		if len(self.deck) == 0 and len(self.hand) == 0:
 			if self.checkDefeat(self.lastDeckLen == len(self.reserve)):
 				print("Game Over!")
 				self.defeatSound.play()
-				self.phase = 2
+				self.phase = END
 				return
 			# si la pioche et la main sont vides, remettre la réserve dans le deck
 			for c in self.reserve[::-1]:
@@ -175,6 +176,32 @@ class Solitaire():
 				c = self.deck.pick()
 				c.show()
 				self.hand.add(c)
+
+	# sur quelle pile As c peut-elle aller?
+	def getAceTarget(self, c):
+		A = CardPile2("dummy", (0,0))
+		A.add(c, updatePos=True)
+		for B in self.acePiles:
+			if self.isMoveAllowed(A, B):
+				return B
+		return None
+
+	# logique de rangement des cartes (animation victoire)
+	def stackUp(self):
+		if self.movingCard == None:
+			# stack next card
+			self.movingCard = self.nextStackingPile.pick()
+			# find next stacking move
+			i = self.piles.index(self.nextStackingPile) + 1
+			while True:
+				if i == 7:
+					i = 0
+				if len(self.piles[i]) > 0:
+					target = self.getAceTarget(self.piles[i].getNext())
+					if target != None:
+						self.nextStackingPile = self.piles[i]
+						self.nextStackingTarget = target
+				i += 1
 
 	# renvoie True si la partie est terminée
 	def leftClick(self):

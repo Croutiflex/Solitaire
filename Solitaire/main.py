@@ -31,7 +31,7 @@ def main():
 									game.leftClick()
 								case 3:
 									game.rightClick()
-							if game.phase == 2:
+							if game.phase == 3:
 								mode = "menu"
 								activeMenu = menuV if game.isWon else menuL
 						case pg.MOUSEBUTTONUP:

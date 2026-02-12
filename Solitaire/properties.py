@@ -41,7 +41,8 @@ colorLabel = ["Coeur","Trèfle","Carreau","Pique"]
 # phases de jeu
 DEAL = 0
 GAME = 1
-END = 2
+WIN = 2
+END = 3
 
 # path
 menuConfigPath = "config/menu/"
