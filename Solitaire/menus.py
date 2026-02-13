@@ -19,15 +19,20 @@ class StandardMenu():
 				bgcolor = randomColor(high=200) if bgconfig["value"] == "random" else pg.Color(bgconfig["value"]["r"], bgconfig["value"]["g"], bgconfig["value"]["b"])
 				bg = HighLightRect(bgcolor, w, h, pos=midScreen)
 				self.drawables.add(bg)
+			case "image":
+				bg = BasicSprite(pg.transform.smoothscale(pg.image.load(menuResPath+bgconfig["value"]), (w,h)))
+				bg.moveCenter(midScreen)
+				self.drawables.add(bg)
 
 		# title
 		titleconfig = menu["title"]
-		match titleconfig["type"]:
-			case "text":
-				font = pg.font.Font(font1, fontSize1)
-				title = BasicSprite(font.render(titleconfig["value"], True, negativeColor(bgcolor), bgcolor))
-				title.moveCenter((midx, bg.rect.top+h/10))
-				self.drawables.add(title)
+		if titleconfig != "off":
+			match titleconfig["type"]:
+				case "text":
+					font = pg.font.Font(font1, fontSize1)
+					title = BasicSprite(font.render(titleconfig["value"], True, negativeColor(bgcolor), bgcolor))
+					title.moveCenter((midx, bg.rect.top+h/10))
+					self.drawables.add(title)
 
 		# buttons
 		tmp = menu["buttonlayout"].split("x")

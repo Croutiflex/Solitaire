@@ -2,7 +2,7 @@ import pygame as pg
 
 # constantes
 maxFramerate = 60
-scaleRatio = 0.6
+scaleRatio = 0.5
 W = 1920*scaleRatio
 H = 1080*scaleRatio
 scaleRatio = W/1920

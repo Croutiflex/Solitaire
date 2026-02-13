@@ -1,13 +1,10 @@
 {
-	"size":0.3333,
+	"size":0.6,
 	"background":{
-		"type":"plain",
-		"value":{"r":255, "g":0, "b":0}
+		"type":"image",
+		"value":"fondLose.png"
 	},
-	"title":{
-		"type" : "text",
-		"value" : "Perdu!"
-	},
+	"title":"off",
 	"buttonlayout":"1x2",
 	"buttons":[
 		{"name":"rejouer", "w":200, "h":100, "image1":"replay.png", "image2":"replay2.png"},
