@@ -64,6 +64,9 @@ def main():
 							match event.key:
 								case pg.K_ESCAPE:
 									running = False
+								case _:
+									mode = "game"
+									game.cascade()
 				activeMenu.update()
 				activeMenu.draw(screen)
 

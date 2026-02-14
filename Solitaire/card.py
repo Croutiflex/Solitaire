@@ -1,6 +1,7 @@
 import pygame as pg
 from utils import *
 from properties import *
+import time
 
 class Card(SpriteWithTL):
 	def __init__(self, Id, back, size):
@@ -16,6 +17,7 @@ class Card(SpriteWithTL):
 		self.isRed = self.color%2 == 0
 		self.isBlack = not self.isRed
 		self.isFollowingMouse = False
+		self.isBouncing = False
 		# print("création : ", str(self))
 
 	def __str__(self):
@@ -55,11 +57,30 @@ class Card(SpriteWithTL):
 	def unfollowMouse(self):
 		self.isFollowingMouse = False
 
+	def startBouncing(self, initialSpeed):
+		self.isBouncing = True
+		self.currentSpeed = initialSpeed
+		self.lastFrameTime = time.time()
+
+	def bounce(self):
+		dt = time.time() - self.lastFrameTime
+		self.rect.left += self.currentSpeed[0]*dt
+		self.rect.top += self.currentSpeed[1]*dt
+		if self.rect.bottom > H:
+			self.rect.bottom = H
+			if self.currentSpeed[1] < minBounceSpeed:
+				self.isBouncing = False
+				return
+			self.currentSpeed[1] *= -1
+		self.currentSpeed[1] += gravity*dt
+
 	def update(self):
 		if self.isFollowingMouse:
 			(x,y) = self.posToMouse
 			(a,b) = pg.mouse.get_pos()
 			self.rect.center = (x+a, y+b)
+		elif self.isBouncing:
+			self.bounce()
 		else:
 			super().update()
 
@@ -112,6 +133,7 @@ class CardPile(): # pile simple sans déroulement
 		if len(self) == 0:
 			return
 		self.cards[-1].draw(screen)
+
 
 class CardPile2(CardPile): # pile déroulante sans interaction avec la souris
 	def __init__(self, type, pos, offset=(0,0), cards=[]):

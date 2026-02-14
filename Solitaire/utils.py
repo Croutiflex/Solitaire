@@ -12,7 +12,7 @@ def randomColor(low=0, high=255):
 
 # renvoie la couleur opposée à la couleur donnée
 def negativeColor(c : pg.Color):
-	return pg.Color(255-c.r, 255-c.g, 255-c.b, 255-c.a)
+	return pg.Color(255-c.r, 255-c.g, 255-c.b)
 
 def playRandomSound(soundList):
 	soundList[random.randint(0,len(soundList)-1)].play()

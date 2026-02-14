@@ -3,7 +3,6 @@ Fonctionnalités à implémenter
 must have:
 - transition vers menu fin
 - cascade de victoire
-- Son (WIP)
 - menu pause & choix apparence
 	- sauvegarde dernière apparence
 

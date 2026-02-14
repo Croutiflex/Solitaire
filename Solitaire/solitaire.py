@@ -316,6 +316,11 @@ class Solitaire():
 		c.show()
 		pile.add(c, updatePos=True) # la carte change de pile mais ne bouge pas
 
+	def cascade(self):
+		self.phase = CASCADE
+		self.movingCard = self.acePiles[0].pick()
+		self.movingCard.startBouncing([random.randint(-20,5), random.randint(-10,10)])
+
 	def update(self):
 		match self.phase:
 			case 0: # distribution
@@ -360,8 +365,14 @@ class Solitaire():
 					self.movingCard.update()
 				else:
 					self.stackUp()
+			case 4: # animation cascade
+				self.movingCard.update()
 
 	def draw(self, screen):
+		if self.phase == CASCADE:
+			for p in self.acePiles:
+				p.draw(screen)
+			return
 		screen.blit(self.background, (0,0))
 		if self.pileUnderMouse == self.deck:
 			self.deckHL.draw(screen)

@@ -14,6 +14,8 @@ cardRatio = 192/128 # h/w
 slideTime1 = 0.1
 slideTime2 = 0.3
 slideTime3 = 0.2
+gravity = 20*scaleRatio
+minBounceSpeed = 5
 space1 = 20*scaleRatio
 space2 = 50*scaleRatio
 space3 = 75*scaleRatio
@@ -44,6 +46,7 @@ DEAL = 0
 GAME = 1
 WIN = 2
 END = 3
+CASCADE = 4
 
 # path
 menuConfigPath = "config/menu/"
