@@ -66,12 +66,15 @@ class Card(SpriteWithTL):
 		dt = time.time() - self.lastFrameTime
 		self.rect.left += self.currentSpeed[0]*dt
 		self.rect.top += self.currentSpeed[1]*dt
+		if self.rect.right < 0 or self.rect.left > W: # stop si hors de l'écran
+			self.isBouncing = False
+			return
 		if self.rect.bottom > H:
 			self.rect.bottom = H
-			if self.currentSpeed[1] < minBounceSpeed:
+			self.currentSpeed[1] *= -1*bounceRatio
+			if abs(self.currentSpeed[1]) < minBounceSpeed:
 				self.isBouncing = False
 				return
-			self.currentSpeed[1] *= -1
 		self.currentSpeed[1] += gravity*dt
 
 	def update(self):

@@ -218,7 +218,7 @@ class Solitaire():
 		# stack next card
 		if nextStackingPile == None: # fin de l'animation
 			self.victorySound.play()
-			self.phase = END
+			self.cascade()
 			return
 		self.movingCard = nextStackingPile.pick()
 		def f():
@@ -230,6 +230,12 @@ class Solitaire():
 	# renvoie True si la partie est terminée
 	def leftClick(self):
 		if self.pileUnderMouse == None or self.phase != GAME:
+			return
+		if self.checkVictory():
+			print("Victoire!")
+			self.phase = WIN
+			self.lastStackingPileIndex = 6
+			self.stackUp()
 			return
 		if self.pileUnderMouse.type == "deck":
 			self.pioche()
@@ -267,6 +273,12 @@ class Solitaire():
 	# renvoie True si la partie est terminée
 	def rightClick(self):
 		if self.pileUnderMouse == None or self.phase != GAME or self.movingCard != None:
+			return
+		if self.checkVictory():
+			print("Victoire!")
+			self.phase = WIN
+			self.lastStackingPileIndex = 6
+			self.stackUp()
 			return
 		dummyPile = CardPile2("dummy", (0,0))
 		A = self.pileUnderMouse
@@ -316,10 +328,15 @@ class Solitaire():
 		c.show()
 		pile.add(c, updatePos=True) # la carte change de pile mais ne bouge pas
 
+	# démarre un animation de cascade pour la carte suivante. Si rien à cascader, renvoie True.
 	def cascade(self):
 		self.phase = CASCADE
-		self.movingCard = self.acePiles[0].pick()
+		piles = [p for p in self.acePiles if len(p) > 0]
+		if len(piles) == 0:
+			return True
+		self.movingCard = random.choice(piles).pick()
 		self.movingCard.startBouncing([random.randint(-20,5), random.randint(-10,10)])
+		return False
 
 	def update(self):
 		match self.phase:
@@ -367,11 +384,16 @@ class Solitaire():
 					self.stackUp()
 			case 4: # animation cascade
 				self.movingCard.update()
+				if not self.movingCard.isBouncing:
+					# cascader la carte suivante
+					if self.cascade():
+						self.phase = END
 
 	def draw(self, screen):
 		if self.phase == CASCADE:
 			for p in self.acePiles:
 				p.draw(screen)
+			self.movingCard.draw(screen)
 			return
 		screen.blit(self.background, (0,0))
 		if self.pileUnderMouse == self.deck:

@@ -1,8 +1,8 @@
 Fonctionnalités à implémenter
 
 must have:
+- animation flip carte
 - transition vers menu fin
-- cascade de victoire
 - menu pause & choix apparence
 	- sauvegarde dernière apparence
 

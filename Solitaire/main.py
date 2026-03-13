@@ -46,6 +46,8 @@ def main():
 				if game.phase == END:
 					mode = "menu"
 					activeMenu = menuV if game.isWon else menuL
+				elif game.phase == CASCADE:
+					mode = "cascade"
 				game.update()
 				game.draw(screen)
 			case "menu":
@@ -64,11 +66,20 @@ def main():
 							match event.key:
 								case pg.K_ESCAPE:
 									running = False
-								case _:
-									mode = "game"
-									game.cascade()
 				activeMenu.update()
 				activeMenu.draw(screen)
+			case "cascade":
+				game.update()
+				game.draw(screen)
+				for event in pg.event.get():
+					match event.type:
+						case pg.QUIT: running = False
+						case pg.KEYDOWN:
+							mode = "menu"
+							activeMenu = menuV
+				if game.phase == END:
+					mode = "menu"
+					activeMenu = menuV
 
 		pg.display.flip()
 		clock.tick(maxFramerate)
