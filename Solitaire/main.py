@@ -77,6 +77,7 @@ def main():
 						case pg.KEYDOWN:
 							mode = "menu"
 							activeMenu = menuV
+							game.cleanup()
 				if game.phase == END:
 					mode = "menu"
 					activeMenu = menuV

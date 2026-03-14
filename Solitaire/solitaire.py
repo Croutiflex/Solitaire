@@ -63,6 +63,10 @@ class Solitaire():
 		self.deck = CardPile("deck", (space4, space3), cards=allCards)
 		self.deal()
 
+	# pour les éventuelles actions à faire en fin de partie
+	def cleanup(self):
+		self.movingCard.isBouncing = False
+
 	def deal(self):
 		self.phase = DEAL
 		random.shuffle(self.deck.cards)
