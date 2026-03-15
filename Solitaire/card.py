@@ -16,8 +16,10 @@ class Card(SpriteWithTL):
 			self.value = 13
 		self.isRed = self.color%2 == 0
 		self.isBlack = not self.isRed
+		# animations
 		self.isFollowingMouse = False
 		self.isBouncing = False
+		self.isFLipping = False
 		# print("création : ", str(self))
 
 	def __str__(self):
@@ -35,19 +37,35 @@ class Card(SpriteWithTL):
 				ret += str(self.value)
 		return ret + " de " + colorLabel[self.color]
 
-	def hide(self):
-		self.image = self.imageBack
-		self.hidden = True
+	def hide(self, animate=False):
+		if not self.hidden:
+			if animate:
+				self.isFLipping = True
+				self.lastFrameTime = time.time()
+				self.flipRatio = 1
+				self.flipShow = False
+				self.baseRect = self.rect.copy()
+			else:
+				self.image = self.imageBack
+				self.hidden = True
 
-	def show(self):
-		self.image = self.imageFront
-		self.hidden = False
-
-	def flip(self):
+	def show(self, animate=False):
 		if self.hidden:
-			self.show()
+			if animate:
+				self.isFLipping = True
+				self.lastFrameTime = time.time()
+				self.flipRatio = 1
+				self.flipShow = True
+				self.baseRect = self.rect.copy()
+			else:
+				self.image = self.imageFront
+				self.hidden = False
+
+	def flip(self, animate=False):
+		if self.hidden:
+			self.show(animate)
 		else:
-			self.hide()
+			self.hide(animate)
 
 	# tell the card to start following the mouse
 	def followMouse(self, relativePos=(0,0)):
@@ -77,8 +95,43 @@ class Card(SpriteWithTL):
 				return
 		self.currentSpeed[1] += gravity*dt
 
+	# animation de retournement
+	# attention : ne fonctionne que si la carte reste à la même position
+	def doFlip(self):
+		if self.lastFrameTime == None:
+			self.lastFrameTime = time.time()
+			return
+		dt = time.time() - self.lastFrameTime
+		self.flipRatio -= dt*flipSpeed
+		if self.flipRatio < -1: # fin de l'animation
+			self.isFLipping = False
+			if self.flipShow:
+				self.image = self.imageFront
+				self.hidden = False
+				self.rect = self.baseRect
+			else:
+				self.image = self.imageBack
+				self.hidden = True
+				self.rect = self.baseRect
+			return
+
+		scale = (abs(self.flipRatio), 1)
+		self.rect = self.baseRect.scale_by(scale[0], scale[1])
+		if self.flipShow: # if showing
+			if self.flipRatio > 0: # première partie : cacher le verso
+				self.image = pg.transform.smoothscale_by(self.imageBack, scale)
+			else: # 2e partie : montrer le recto
+				self.image = pg.transform.smoothscale_by(self.imageFront, scale)
+		else: # if hiding
+			if self.flipRatio > 0: # première partie : cacher le recto
+				self.image = pg.transform.smoothscale_by(self.imageFront, scale)
+			else: # 2e partie : montrer le verso
+				self.image = pg.transform.smoothscale_by(self.imageBack, scale)
+
 	def update(self):
-		if self.isFollowingMouse:
+		if self.isFLipping:
+			self.doFlip()
+		elif self.isFollowingMouse:
 			(x,y) = self.posToMouse
 			(a,b) = pg.mouse.get_pos()
 			self.rect.center = (x+a, y+b)
@@ -209,7 +262,8 @@ class CardPile2(CardPile): # pile déroulante sans interaction avec la souris
 			c.unfollowMouse()
 
 	def update(self):
-		self.drawables.update()
+		# self.drawables.update()  # obsolète
+		pass
 
 	def draw(self, screen):
 		self.drawables.draw(screen)
@@ -282,7 +336,7 @@ class CardPile3(CardPile2): # pile avec déroulement et sélection multiple
 
 	# renvoie True si la souris est sur cette pile
 	def update(self):
-		super().update()
+		# super().update()
 		L = pg.sprite.spritecollide(Point(pg.mouse.get_pos()), self.collidables, False)
 		if len(L) > 0:
 			L.sort(key = lambda s : s._layer)
@@ -323,8 +377,8 @@ class CardPile4(CardPile): # pile simple avec sélection et highlight
 			c.unfollowMouse()
 
 	def update(self):
-		if len(self) == 1:
-			self.cards[0].update()
+		# if len(self) == 1:
+		# 	self.cards[0].update()
 		self.isMouseHere = self.HL.rect.collidepoint(pg.mouse.get_pos())
 		return self.isMouseHere
 

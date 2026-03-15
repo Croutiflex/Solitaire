@@ -14,6 +14,7 @@ handPos = (space4 + cardW + space2, space3)
 # pioche
 back = pg.image.load(cardsFolder + "back.png")
 allCards = [Card(i+1, back, cardSize) for i in range(52)]
+allCardsGroup = pg.sprite.Group(allCards)
 
 class Solitaire():
 	def __init__(self):
@@ -315,7 +316,7 @@ class Solitaire():
 				if len(self.hand) == 0: # si on vide la main, ajouter la carte suivante
 					c = self.deck.pick()
 					if c != None:
-						c.show()
+						c.show(animate=True)
 						self.hand.add(c)
 			def f1():
 				dest.add(self.movingCard)
@@ -329,7 +330,7 @@ class Solitaire():
 		c = hp.pick()
 		if c == None:
 			return
-		c.show()
+		c.show(animate=True)
 		pile.add(c, updatePos=True) # la carte change de pile mais ne bouge pas
 
 	# démarre un animation de cascade pour la carte suivante. Si rien à cascader, renvoie True.
@@ -343,6 +344,7 @@ class Solitaire():
 		return False
 
 	def update(self):
+		allCardsGroup.update()
 		match self.phase:
 			case 0: # distribution
 				if self.movingCard == None: # pas de carte qui bouge
@@ -366,13 +368,11 @@ class Solitaire():
 								self.movingCard = None
 								playRandomSound(self.playlist1)
 							self.movingCard.animate(self.hiddenPiles[self.dealB].nextCardPos, f2)
-				else:
-					self.movingCard.update()
 			case 1: # jeu
 				if self.movingPile != None:
 					self.movingPile.update()
 				if self.movingCard != None:
-					self.movingCard.update()
+					# self.movingCard.update()
 					return
 				self.pileUnderMouse = None
 				if self.deckHL.rect.collidepoint(pg.mouse.get_pos()):
@@ -382,12 +382,10 @@ class Solitaire():
 						if p.update():
 							self.pileUnderMouse = p
 			case 2: # animation victoire
-				if self.movingCard != None:
-					self.movingCard.update()
-				else:
+				if self.movingCard == None:
 					self.stackUp()
 			case 4: # animation cascade
-				self.movingCard.update()
+				# self.movingCard.update()
 				if not self.movingCard.isBouncing:
 					# cascader la carte suivante
 					if self.cascade():

@@ -40,7 +40,6 @@ class StandardMenu():
 		x, y = bg.rect.left, bg.rect.top + h/5
 		w2, h2 = w/(m+1), h*0.8/(n+1)
 		buttonPos = [[(x+w2*(j+1), y+h2*(i+1)) for j in range(m)] for i in range(n)]
-		print(buttonPos)
 		self.buttons = []
 		i, j = 0, 0
 		for b in menu["buttons"]:

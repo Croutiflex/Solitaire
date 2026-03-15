@@ -17,6 +17,7 @@ slideTime3 = 0.2
 gravity = 10*scaleRatio
 minBounceSpeed = 3
 bounceRatio = 0.75
+flipSpeed = 0.75
 space1 = 20*scaleRatio
 space2 = 50*scaleRatio
 space3 = 75*scaleRatio
