@@ -8,6 +8,7 @@ class StandardMenu():
 		file = open(menuConfigPath+configFile, 'r')
 		menu = json.load(file)
 		file.close()
+		self.fileContent = menu
 		self.drawables = pg.sprite.RenderPlain()
 
 		# background
@@ -17,7 +18,7 @@ class StandardMenu():
 		match bgconfig["type"]:
 			case "plain":
 				bgcolor = randomColor(high=200) if bgconfig["value"] == "random" else pg.Color(bgconfig["value"]["r"], bgconfig["value"]["g"], bgconfig["value"]["b"])
-				bg = HighLightRect(bgcolor, w, h, pos=midScreen)
+				bg = ColorRect(bgcolor, w, h, pos=midScreen)
 				self.drawables.add(bg)
 			case "image":
 				bg = BasicSprite(pg.transform.smoothscale(pg.image.load(menuResPath+bgconfig["value"]), (w,h)))

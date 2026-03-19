@@ -26,7 +26,7 @@ class Solitaire():
 			c.hide()
 			c._layer = 0
 		self.deck = CardPile("deck", (space4, space3), cards=allCards)
-		self.deckHL = HighLightRect(white, cardW+2*space5, cardH+2*space5, pos=self.deck.cards[0].rect.center)
+		self.deckHL = ColorRect(white, cardW+2*space5, cardH+2*space5, pos=self.deck.cards[0].rect.center)
 		self.reserve = []
 		self.hand = CardPile3("hand", handPos, offset=(space3, 0), limit=1)
 		# piles
@@ -316,7 +316,7 @@ class Solitaire():
 				if len(self.hand) == 0: # si on vide la main, ajouter la carte suivante
 					c = self.deck.pick()
 					if c != None:
-						c.show(animate=True)
+						c.show()
 						self.hand.add(c)
 			def f1():
 				dest.add(self.movingCard)

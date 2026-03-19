@@ -18,9 +18,9 @@ def playRandomSound(soundList):
 	soundList[random.randint(0,len(soundList)-1)].play()
 
 class BasicSprite(pg.sprite.Sprite):
-	def __init__(self,image,layer=0,pos=(0,0)):
+	def __init__(self,image,size=None,layer=0,pos=(0,0)):
 		pg.sprite.Sprite.__init__(self)
-		self.image = image
+		self.image = image if size == None else pg.transform.smoothscale(image, size)
 		self.rect = self.image.get_rect(x=pos[0], y=pos[1])
 		self._layer = layer
 	def moveCenter(self,pos):
@@ -35,9 +35,9 @@ class BasicSprite(pg.sprite.Sprite):
 	def basicCopy(self, pos):
 		return BasicSprite(self.image, layer=self._layer, pos=self.rect.topleft)
 
-class HighLightRect(BasicSprite):
+class ColorRect(BasicSprite):
 	def __init__(self,color,width,height,layer=-1,pos=(0,0)):
-		super().__init__(pg.Surface([width, height]), layer)
+		super().__init__(pg.Surface([width, height]), layer=layer)
 		self.image.fill(color)
 		self.moveCenter(pos)
 	def set_color(self,color):
@@ -45,8 +45,8 @@ class HighLightRect(BasicSprite):
 
 # a sprite that can be animated to move in a straight line to a given destination
 class SpriteWithTL(BasicSprite):
-	def __init__(self,image,layer=0,pos=(0,0)):
-		super().__init__(image,layer,pos)
+	def __init__(self,image,layer=0,size=None,pos=(0,0)):
+		super().__init__(image,layer=layer,size=size,pos=pos)
 		self.done = True
 
 	# tell the sprite to start moving to dest = (x,y)
@@ -104,7 +104,7 @@ class Point(pg.sprite.Sprite):
 
 # bouton avec 2 images (survolé ou pas)
 class Button(BasicSprite):
-	def __init__(self, path1, path2, size, pos=(0,0), name="default"):
+	def __init__(self, path1, path2, size, pos=(0,0), name="button"):
 		self.imgOn = pg.transform.smoothscale(pg.image.load(path2), size)
 		self.imgOff = pg.transform.smoothscale(pg.image.load(path1), size)
 		self.name = name
@@ -123,3 +123,31 @@ class CloseButton(Button):
 		h2 = screenSize[1]/20
 		size = (h2, h2)
 		Button.__init__(self, "res/X.png", "res/X2.png", size, (screenSize[0] - h2*2, h2))
+
+# bouton amélioré permettant de choisir entre plusieurs options
+# pathList = liste des images représentant les options
+class Selector1(BasicSprite):
+	def __init__(self, pathList, size, pos=(0,0), name="selector"):
+		self.name = name
+		self.image = pg.Surface(size)
+		self.rect = self.image.get_rect(x=pos[0], y=pos[1])
+		optSize = ((size[0]-(len(pathList)-1)*space5)/len(pathList), size[1]/2)
+		self.options = [BasicSprite(pg.image.load(pathList[i]), size=optSize, pos=(i*(optSize[0]+space5), 0)) for i in range(len(pathList))]
+		indicatorSize = (optSize[0]-2*space5, optSize[1]-space5)
+		self.indicatorPos = [(self.options[i].rect.left+space5, optSize[1]+space5) for i in range(len(pathList))]
+		self.indicator = BasicSprite(pg.image.load(menuResPath+"applique.png"), size=indicatorSize, pos=self.indicatorPos[0])
+		self.drawables = pg.sprite.RenderUpdates(self.options + [self.indicator])
+		self.selectedOpt = None
+	def click(self):
+		for i in range(len(self.options)):
+			mp = pg.mouse.get_pos()
+			if self.options[i].rect.collidepoint((mp[0]-self.rect.left, mp[1]-self.rect.top)):
+				self.selectedOpt = i
+				self.indicator.move(self.indicatorPos[i])
+				return self.selectedOpt
+		self.selectedOpt = None
+		return self.selectedOpt
+	def draw(self, screen):
+		self.image.fill("black")
+		self.drawables.draw(self.image)
+		super().draw(screen)

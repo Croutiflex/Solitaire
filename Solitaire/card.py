@@ -277,7 +277,7 @@ class CardPile3(CardPile2): # pile avec déroulement et sélection multiple
 		for c in self.cards:
 			c._layer = n
 			n += 2
-		self.HL = HighLightRect(white, cardW+2*space5, cardH+2*space5)
+		self.HL = ColorRect(white, cardW+2*space5, cardH+2*space5)
 		self.limit = limit
 		if limit == None:
 			self.collidables = pg.sprite.LayeredUpdates(self.cards)
@@ -358,7 +358,7 @@ class CardPile3(CardPile2): # pile avec déroulement et sélection multiple
 class CardPile4(CardPile): # pile simple avec sélection et highlight
 	def __init__(self, type, pos, cards=[]):
 		super().__init__(type, pos, cards)
-		self.HL = HighLightRect(white, cardW+2*space5, cardH+2*space5)
+		self.HL = ColorRect(white, cardW+2*space5, cardH+2*space5)
 		self.HL.move((pos[0] - space5, pos[1] - space5))
 		self.isMouseHere = False
 
