@@ -13,7 +13,7 @@ def main():
 	running = True
 	clock = pg.time.Clock()
 
-	mode = "test"
+	mode = "game"
 	game = Solitaire()
 	menuV = StandardMenu("victoryMenu.json")
 	menuL = StandardMenu("defeatMenu.json")
@@ -21,6 +21,7 @@ def main():
 	activeMenu = None
 
 	# test __________________________
+	# mode = "test"
 	selector = Selector1([menuResPath+"button2.png"]*3, (600, 100), pos=(100,100))
 	# _______________________________
 
