@@ -104,14 +104,15 @@ class Point(pg.sprite.Sprite):
 
 # bouton avec 2 images (survolé ou pas)
 class Button(BasicSprite):
-	def __init__(self, path1, path2, size, pos=(0,0), name="button"):
-		self.imgOn = pg.transform.smoothscale(pg.image.load(path2), size)
-		self.imgOff = pg.transform.smoothscale(pg.image.load(path1), size)
+	def __init__(self, path, size, pos=(0,0), name="button"):
+		self.imgOff = pg.transform.smoothscale(pg.image.load(path), size)
+		self.imgOn = pg.transform.smoothscale(pg.image.load(getPushedButtonPath(path)), size)
 		self.name = name
 		self.isSelected = False
 		super().__init__(self.imgOff, pos=pos)
-	def update(self):
-		if self.rect.collidepoint(pg.mouse.get_pos()):
+	def update(self, mouseOffSet=(0,0)):
+		mp = pg.mouse.get_pos()
+		if self.rect.collidepoint((mp[0]+mouseOffSet[0], mp[1]+mouseOffSet[1])):
 			self.image = self.imgOn
 			self.isSelected = True
 		else:
@@ -132,7 +133,7 @@ class Selector1(BasicSprite):
 		self.image = pg.Surface(size)
 		self.rect = self.image.get_rect(x=pos[0], y=pos[1])
 		optSize = ((size[0]-(len(pathList)-1)*space5)/len(pathList), size[1]/2)
-		self.options = [BasicSprite(pg.image.load(pathList[i]), size=optSize, pos=(i*(optSize[0]+space5), 0)) for i in range(len(pathList))]
+		self.options = [Button(pathList[i], size=optSize, pos=(i*(optSize[0]+space5), 0)) for i in range(len(pathList))]
 		indicatorSize = (optSize[0]-2*space5, optSize[1]-space5)
 		self.indicatorPos = [(self.options[i].rect.left+space5, optSize[1]+space5) for i in range(len(pathList))]
 		self.indicator = BasicSprite(pg.image.load(menuResPath+"applique.png"), size=indicatorSize, pos=self.indicatorPos[0])
@@ -147,7 +148,15 @@ class Selector1(BasicSprite):
 				return self.selectedOpt
 		self.selectedOpt = None
 		return self.selectedOpt
+	def update(self):
+		self.drawables.update(mouseOffSet=(-self.rect.left,-self.rect.top))
 	def draw(self, screen):
 		self.image.fill("black")
 		self.drawables.draw(self.image)
 		super().draw(screen)
+
+# in : "button.png"
+# out : "button2.png"
+def getPushedButtonPath(path):
+	l = path.split(".")
+	return l[0]+"2."+l[1]

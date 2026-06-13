@@ -52,6 +52,6 @@ CASCADE = 4
 
 # path
 menuConfigPath = "config/menu/"
-cardsFolder = "res/cards/"
+cardsFolder = "res/cards/2/"
 menuResPath = "res/menu/"
 soundResPath = "res/sound/"

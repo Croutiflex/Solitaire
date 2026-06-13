@@ -19,9 +19,9 @@ allCardsGroup = pg.sprite.Group(allCards)
 class Solitaire():
 	def __init__(self):
 		# self.backgroundColor = randomColor(high=200)
-		self.background = pg.transform.smoothscale(pg.image.load("res/fond1.png"), screenSize)
+		self.background = pg.transform.smoothscale(pg.image.load("res/background/1.png"), screenSize)
 		self.cheatEnabled = False
-		self.isWon = False
+		self.dealMode = 3 # piocher 1 ou 3 cartes à la fois?
 		for c in allCards:
 			c.hide()
 			c._layer = 0
@@ -40,6 +40,7 @@ class Solitaire():
 		self.defeatSound = pg.mixer.Sound(soundResPath+"pwapwa.wav")
 		self.victorySound = pg.mixer.Sound(soundResPath+"tinting.wav")
 		# détection de la défaite
+		self.isWon = False
 		self.noMoreDeckMoves = False
 		self.lastDeckLen = len(self.deck)
 		# démarrage de la distribution
@@ -123,11 +124,11 @@ class Solitaire():
 			return True
 		# check for deck moves
 		playableCards = []
-		i = 2
+		i = self.dealMode - 1
 		while i < len(self.reserve):
 			playableCards.append(self.reserve[i])
-			i += 3
-		if len(self.reserve)%3 != 0:
+			i += self.dealMode
+		if len(self.reserve) % self.dealMode != 0:
 			playableCards.append(self.reserve[-1])
 		# print("playableCards : ", [str(c) for c in playableCards])
 		for c in playableCards:
@@ -177,7 +178,7 @@ class Solitaire():
 			self.hand.empty()
 			# piocher n cartes
 			self.sounds[8].play()
-			for i in range(min(3, len(self.deck))):
+			for i in range(min(self.dealMode, len(self.deck))):
 				c = self.deck.pick()
 				c.show()
 				self.hand.add(c)

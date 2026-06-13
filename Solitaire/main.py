@@ -15,14 +15,14 @@ def main():
 
 	mode = "game"
 	game = Solitaire()
-	menuV = StandardMenu("victoryMenu.json")
-	menuL = StandardMenu("defeatMenu.json")
-	pauseMenu = StandardMenu("pauseMenu.json")
+	# menuV = StandardMenu("victoryMenu.json")
+	# menuL = StandardMenu("defeatMenu.json")
+	# pauseMenu = StandardMenu("pauseMenu.json")
 	activeMenu = None
 
 	# test __________________________
-	# mode = "test"
-	selector = Selector1([menuResPath+"button2.png"]*3, (600, 100), pos=(100,100))
+	mode = "test"
+	selector = Selector1([menuResPath+"options.png", menuResPath+"reprendre.png", menuResPath+"newgame.png"], (600, 100), pos=(100,100))
 	# _______________________________
 
 	while running:
@@ -110,6 +110,7 @@ def main():
 					mode = "menuEnd"
 					activeMenu = menuV
 			case "test":
+				selector.update()
 				selector.draw(screen)
 				for event in pg.event.get():
 					match event.type:
