@@ -21,7 +21,7 @@ def main():
 	activeMenu = None
 
 	# test __________________________
-	mode = "test"
+	# mode = "test"
 	selector = Selector1([menuResPath+"options.png", menuResPath+"reprendre.png", menuResPath+"newgame.png"], (600, 100), pos=(100,100))
 	# _______________________________
 
