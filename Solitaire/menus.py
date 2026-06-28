@@ -3,6 +3,8 @@ import json
 from properties import *
 from utils import *
 
+fillRatio = 0.8
+
 class StandardMenu():
 	def __init__(self, configFile):
 		file = open(menuConfigPath+configFile, 'r')
@@ -58,6 +60,78 @@ class StandardMenu():
 		for b in self.buttons:
 			if b.isSelected:
 				return b.name
+
+	def update(self):
+		self.drawables.update()
+
+	def draw(self, screen):
+		self.drawables.draw(screen)
+
+class StandardMenu2():
+	def __init__(self, configFile):
+		file = open(menuConfigPath+configFile, 'r')
+		config = json.load(file)
+		file.close()
+		self.drawables = pg.sprite.RenderUpdates()
+		self.name = config["title"]
+		w, h = W*menu["size"], H*menu["size"]
+		self.size = w, h
+		self.offset = config["contentOffset"]
+		self.background = self.setBackground(config["background"])
+		self.drawables.add(self.setBackground)
+		self.setContent(config["content"])
+
+	def setBackground(self, bgconfig):
+		w, h = self.size
+		v = bgconfig["value"]
+		match bgconfig["type"]:
+			case "plain":
+				bgcolor = randomColor(high=200) if v == "random" else pg.Color(v["r"], v["g"], v["b"])
+				return ColorRect(bgcolor, w, h, pos=midScreen)
+			case "image":
+				bg = BasicSprite(pg.transform.smoothscale(pg.image.load(menuResPath+v), (w,h)))
+				bg.moveCenter(midScreen)
+				return bg
+
+	def setContent(self, content):
+		self.buttons = []
+		self.selectors = []
+		w, h = self.size
+		h -= self.offset
+		currentPos = (self.background.rect.left, self.background.rect.top + self.offset)
+		done = False
+		context = content["content"]
+		while not done:
+			match content["obj"]:
+				case "VBox":
+					l = h/len(context)
+					
+					for elem in context:
+						if context["obj"] == "HBox" or context["obj"] == "VBox":
+							done = True
+						else:
+							self.parseElem(elem, )
+				case "HBox":
+					done = True
+
+	def parseElem(self, elem, size, pos):
+		match elem["obj"]:
+			case "Selector1":
+				selector = Selector1(elem["pathList"], size, pos=pos)
+				self.selectors.append(selector)
+				self.drawables.add(selector)
+			case "Button":
+				button = Button(menuResPath+elem["name"], size, pos=pos, name=elem["name"])
+				self.buttons.append(button)
+				self.drawables.add(button)
+
+	# renvoie le nom du bouton qui a été cliqué, None si aucun
+	def click(self):
+		for b in self.buttons:
+			if b.isSelected:
+				return b.name
+		for s in self.selectors:
+			s.click()
 
 	def update(self):
 		self.drawables.update()
