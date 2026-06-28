@@ -4,12 +4,18 @@
 		"type":"plain",
 		"value":"random"
 	},
-	"title":"off",
-	"buttonlayout":"2x2",
-	"buttons":[
-		{"name":"newgame", "w":300, "h":150, "image1":"button1.png", "image2":"button2.png"},
-		{"name":"options", "w":300, "h":150, "image1":"button1.png", "image2":"button2.png"},
-		{"name":"retour", "w":300, "h":150, "image1":"button1.png", "image2":"button2.png"},
-		{"name":"quitter", "w":300, "h":150, "image1":"exit.png", "image2":"exit2.png"}
-	]
+	"title":"Pause",
+	"content":{
+		"obj":"HBox",
+		"content":[
+			{"obj":"VBox", "content":[
+				{"obj":"Button", "name":"options"},
+				{"obj":"Button", "name":"reprendre"}
+			]},
+			{"obj":"VBox", "content":[
+				{"obj":"Button", "name":"replay"},
+				{"obj":"Button", "name":"exit"}
+			]}
+		]
+	}
 }

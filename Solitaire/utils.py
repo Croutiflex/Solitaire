@@ -29,8 +29,8 @@ class BasicSprite(pg.sprite.Sprite):
 		self.rect.topleft = pos
 		if isOutOfScreen(pos):
 			print("Sprite hors de l'écran! ", pos)
-	def draw(self,screen):
-		screen.blit(self.image, self.rect)
+	def draw(self,s):
+		s.blit(self.image, self.rect)
 	# renvoie une copie simplifliée de n'importe quel sprite
 	def basicCopy(self, pos):
 		return BasicSprite(self.image, layer=self._layer, pos=self.rect.topleft)
@@ -104,12 +104,25 @@ class Point(pg.sprite.Sprite):
 
 # bouton avec 2 images (survolé ou pas)
 class Button(BasicSprite):
-	def __init__(self, path, size, pos=(0,0), name="button"):
+	def __init__(self, path, size=None, pos=(0,0), name="button", autoFillRect=None):
+		if not autoFillRect and not size:
+			print("Erreur création Button : spécifier size ou autoFillRect")
+			return None
+		# autoFillRect : remplir un espace en préservant les proportions de l'image.
+		if autoFillRect != None:
+			img1 = pg.image.load(path)
+			r = img1.get_rect()
+			if r.w/r.h > autoFillRect.w/autoFillRect.h: # image + large que l'espace donné
+				size = (autoFillRect.w, autoFillRect.w*r.h/r.w)
+			else:
+				size = (autoFillRect.h*r.w/r.h, autoFillRect.h)
 		self.imgOff = pg.transform.smoothscale(pg.image.load(path), size)
 		self.imgOn = pg.transform.smoothscale(pg.image.load(getPushedButtonPath(path)), size)
 		self.name = name
 		self.isSelected = False
 		super().__init__(self.imgOff, pos=pos)
+		if autoFillRect != None:
+			self.moveCenter(autoFillRect.center)
 	def update(self, mouseOffSet=(0,0)):
 		mp = pg.mouse.get_pos()
 		if self.rect.collidepoint((mp[0]+mouseOffSet[0], mp[1]+mouseOffSet[1])):
@@ -128,31 +141,34 @@ class CloseButton(Button):
 # bouton amélioré permettant de choisir entre plusieurs options
 # pathList = liste des images représentant les options
 class Selector1(BasicSprite):
-	def __init__(self, pathList, size, pos=(0,0), name="selector"):
+	def __init__(self, pathList, rect, basePath="", name="selector", default=0):
 		self.name = name
-		self.image = pg.Surface(size)
-		self.rect = self.image.get_rect(x=pos[0], y=pos[1])
+		size = rect.size
+		super().__init__(pg.Surface(size), size=size, pos=rect.topleft)
 		optSize = ((size[0]-(len(pathList)-1)*space5)/len(pathList), size[1]/2)
-		self.options = [Button(pathList[i], size=optSize, pos=(i*(optSize[0]+space5), 0)) for i in range(len(pathList))]
+		self.options = [Button(basePath+pathList[i]+".png", size=optSize, pos=(i*(optSize[0]+space5), 0), name=pathList[i]) for i in range(len(pathList))]
 		indicatorSize = (optSize[0]-2*space5, optSize[1]-space5)
 		self.indicatorPos = [(self.options[i].rect.left+space5, optSize[1]+space5) for i in range(len(pathList))]
-		self.indicator = BasicSprite(pg.image.load(menuResPath+"applique.png"), size=indicatorSize, pos=self.indicatorPos[0])
+		self.indicator = BasicSprite(pg.image.load(basePath+"applique.png"), size=indicatorSize, pos=self.indicatorPos[default])
 		self.drawables = pg.sprite.RenderUpdates(self.options + [self.indicator])
-		self.selectedOpt = None
+		self.selectedOpt = self.options[default].name
 	def click(self):
-		for i in range(len(self.options)):
-			mp = pg.mouse.get_pos()
-			if self.options[i].rect.collidepoint((mp[0]-self.rect.left, mp[1]-self.rect.top)):
-				self.selectedOpt = i
+		mp = pg.mouse.get_pos()
+		i = 0
+		for opt in self.options:
+			if opt.rect.collidepoint((mp[0]-self.rect.left, mp[1]-self.rect.top)):
+				self.selectedOpt = opt.name
 				self.indicator.move(self.indicatorPos[i])
+				print("Option "+self.selectedOpt+" sélectionnée")
 				return self.selectedOpt
+			i += 1
 		self.selectedOpt = None
 		return self.selectedOpt
 	def update(self):
 		self.drawables.update(mouseOffSet=(-self.rect.left,-self.rect.top))
-	def draw(self, screen):
 		self.image.fill("black")
 		self.drawables.draw(self.image)
+	def draw(self, screen):
 		super().draw(screen)
 
 # in : "button.png"

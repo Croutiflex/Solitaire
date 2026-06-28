@@ -4,10 +4,13 @@
 		"type":"image",
 		"value":"fondWin.png"
 	},
-	"title":"off",
-	"buttonlayout":"1x2",
-	"buttons":[
-		{"name":"rejouer", "w":300, "h":150, "image1":"replay.png", "image2":"replay2.png"},
-		{"name":"quitter", "w":300, "h":150, "image1":"exit.png", "image2":"exit2.png"}
-	]
+	"offset":100,
+	"title":"Victory",
+	"content":{
+		"obj":"VBox",
+		"content":[
+			{"obj":"Button", "name":"replay"},
+			{"obj":"Button", "name":"exit"}
+		]
+	}
 }

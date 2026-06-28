@@ -5,11 +5,10 @@
 		"value":"random"
 	},
 	"title":"Options",
-	"contentOffset": 100,
 	"content":{
 		"obj":"VBox",
 		"content":[
-			{"obj":"Selector1", "name":"piocheSelector", "pathList":["1carte.png","3cartes.png"]},
+			{"obj":"Selector1", "name":"piocheSelector", "pathList":["1carte","3cartes"], "default":1},
 			{"obj":"HBox", "content":[
 				{"obj":"Button", "name":"options"},
 				{"obj":"Button", "name":"exit"}

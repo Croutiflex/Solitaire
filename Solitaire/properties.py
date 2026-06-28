@@ -23,6 +23,7 @@ space2 = 50*scaleRatio
 space3 = 75*scaleRatio
 space4 = 150*scaleRatio
 space5 = 5*scaleRatio
+space6 = 10*scaleRatio
 screenBottom = H - space1
 backgroundColor = (100, 220, 100)
 white = pg.Color(255, 255, 255, 255)

@@ -15,14 +15,14 @@ def main():
 
 	mode = "game"
 	game = Solitaire()
-	# menuV = StandardMenu("victoryMenu.json")
-	# menuL = StandardMenu("defeatMenu.json")
-	# pauseMenu = StandardMenu("pauseMenu.json")
+	menuV = StandardMenu("victoryMenu.json")
+	menuL = StandardMenu("defeatMenu.json")
+	pauseMenu = StandardMenu("pauseMenu.json")
+	optionsMenu = StandardMenu("optionsMenu.json")
 	activeMenu = None
 
 	# test __________________________
 	# mode = "test"
-	selector = Selector1([menuResPath+"options.png", menuResPath+"reprendre.png", menuResPath+"newgame.png"], (600, 100), pos=(100,100))
 	# _______________________________
 
 	while running:
@@ -65,19 +65,39 @@ def main():
 							match event.button:
 								case 1:
 									match pauseMenu.click():
-										case "newgame":
+										case "replay":
 											game = Solitaire()
 											mode = "game"
 										case "options":
-											pass
-										case "retour":
+											mode = "menuOptions"
+										case "reprendre":
 											mode = "game"
-										case "quitter":
+										case "exit":
 											running = False
 						case pg.KEYDOWN:
 							match event.key:
 								case pg.K_ESCAPE:
 									mode = "game"
+			case "menuOptions":
+				optionsMenu.update()
+				optionsMenu.draw(screen)
+				for event in pg.event.get():
+					match event.type:
+						case pg.MOUSEBUTTONDOWN:
+							match event.button:
+								case 1:
+									match optionsMenu.click():
+										case "exit":
+											mode = "menuPause"
+										case "options":
+											mode = "game"
+											game = Solitaire()
+											opt = optionsMenu.getSelected()["piocheSelector"]
+											game.dealMode = 1 if opt == "1carte" else 3
+						case pg.KEYDOWN:
+							match event.key:
+								case pg.K_ESCAPE:
+									mode = "menuPause"
 			case "menuEnd":
 				activeMenu.update()
 				activeMenu.draw(screen)
@@ -87,10 +107,10 @@ def main():
 							match event.button:
 								case 1:
 									match activeMenu.click():
-										case "rejouer":
+										case "replay":
 											game = Solitaire()
 											mode = "game"
-										case "quitter":
+										case "exit":
 											running = False
 						case pg.KEYDOWN:
 							match event.key:
@@ -110,14 +130,14 @@ def main():
 					mode = "menuEnd"
 					activeMenu = menuV
 			case "test":
-				selector.update()
-				selector.draw(screen)
+				optionsMenu.update()
+				optionsMenu.draw(screen)
 				for event in pg.event.get():
 					match event.type:
 						case pg.MOUSEBUTTONDOWN:
 							match event.button:
 								case 1:
-									selector.click()
+									optionsMenu.click()
 						case pg.KEYDOWN:
 							match event.key:
 								case pg.K_ESCAPE:
