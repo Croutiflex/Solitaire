@@ -1,4 +1,0 @@
-menu pause :
-
-boutons (dans l'ordre) : rejouer/nouvelle partie, options, Reprendre/retour, quitter
-layout : 2x2
