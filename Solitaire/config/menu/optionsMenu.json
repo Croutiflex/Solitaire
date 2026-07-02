@@ -1,5 +1,6 @@
 {
-	"size":0.6,
+	"size":[0.5, 0.9],
+	"spacing":20,
 	"background":{
 		"type":"plain",
 		"value":"random"
@@ -8,7 +9,8 @@
 	"content":{
 		"obj":"VBox",
 		"content":[
-			{"obj":"Selector1", "name":"piocheSelector", "pathList":["1carte","3cartes"], "default":1},
+			{"obj":"Selector1", "name":"piocheSelector", "pathList":["1carte","3cartes"], "default":1, "offset":30},
+			{"obj":"Carousel", "name":"themeSelector", "pathList":["classic", "saison", "fantasy"], "default":1},
 			{"obj":"HBox", "content":[
 				{"obj":"Button", "name":"options"},
 				{"obj":"Button", "name":"exit"}

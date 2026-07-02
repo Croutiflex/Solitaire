@@ -1,5 +1,5 @@
 {
-	"size":0.6,
+	"size":[0.6, 0.6],
 	"background":{
 		"type":"plain",
 		"value":"random"

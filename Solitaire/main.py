@@ -23,6 +23,7 @@ def main():
 
 	# test __________________________
 	# mode = "test"
+	# carousel = Carousel(["button", "exit", "test3", "button2"], pg.Rect(100,200, 700,200), basePath=menuResPath, default=3)
 	# _______________________________
 
 	while running:
@@ -69,6 +70,7 @@ def main():
 											game = Solitaire()
 											mode = "game"
 										case "options":
+											game.draw(screen)
 											mode = "menuOptions"
 										case "reprendre":
 											mode = "game"
@@ -88,12 +90,14 @@ def main():
 								case 1:
 									match optionsMenu.click():
 										case "exit":
+											game.draw(screen)
 											mode = "menuPause"
 										case "options":
 											mode = "game"
 											game = Solitaire()
-											opt = optionsMenu.getSelected()["piocheSelector"]
-											game.dealMode = 1 if opt == "1carte" else 3
+											opt = optionsMenu.getSelected()
+											game.dealMode = 1 if opt["piocheSelector"] == "1carte" else 3
+											print("thème : ", opt["themeSelector"])
 						case pg.KEYDOWN:
 							match event.key:
 								case pg.K_ESCAPE:
@@ -130,14 +134,15 @@ def main():
 					mode = "menuEnd"
 					activeMenu = menuV
 			case "test":
-				optionsMenu.update()
-				optionsMenu.draw(screen)
+				carousel.update()
+				carousel.draw(screen)
 				for event in pg.event.get():
 					match event.type:
 						case pg.MOUSEBUTTONDOWN:
 							match event.button:
 								case 1:
-									optionsMenu.click()
+									carousel.click()
+									print("Option ", carousel.selectedOpt, " sélectionnée")
 						case pg.KEYDOWN:
 							match event.key:
 								case pg.K_ESCAPE:
