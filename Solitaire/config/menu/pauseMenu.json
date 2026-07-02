@@ -9,12 +9,12 @@
 		"obj":"HBox",
 		"content":[
 			{"obj":"VBox", "content":[
-				{"obj":"Button", "name":"options"},
-				{"obj":"Button", "name":"reprendre"}
+				{"obj":"Button", "path":"optionsY.png", "name":"options"},
+				{"obj":"Button", "path":"reprendre.png", "name":"reprendre"}
 			]},
 			{"obj":"VBox", "content":[
-				{"obj":"Button", "name":"replay"},
-				{"obj":"Button", "name":"exit"}
+				{"obj":"Button", "path":"newgameY.png", "name":"replay"},
+				{"obj":"Button", "path":"exitY.png", "name":"exit"}
 			]}
 		]
 	}

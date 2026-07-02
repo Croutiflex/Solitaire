@@ -4,9 +4,9 @@ from properties import *
 import time
 
 class Card(SpriteWithTL):
-	def __init__(self, Id, back, size):
+	def __init__(self, Id, path, back, size):
 		self.Id = Id
-		self.imageFront = pg.transform.smoothscale(pg.image.load(cardsFolder + str(Id) + ".png"), size)
+		self.imageFront = pg.transform.smoothscale(pg.image.load(path + str(Id) + ".png"), size)
 		self.imageBack = pg.transform.smoothscale(back, size)
 		super().__init__(self.imageBack)
 		self.hidden = True
@@ -36,6 +36,11 @@ class Card(SpriteWithTL):
 			case _:
 				ret += str(self.value)
 		return ret + " de " + colorLabel[self.color]
+
+	def setTheme(self, theme, back):
+		self.imageFront = pg.transform.smoothscale(pg.image.load(cardsFolder+theme+"/"+str(self.Id)+".png"), self.rect.size)
+		self.imageBack = pg.transform.smoothscale(back, self.rect.size)
+		self.image = self.imageBack if self.hidden else self.imageFront
 
 	def hide(self, animate=False):
 		if not self.hidden:

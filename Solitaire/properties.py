@@ -53,6 +53,7 @@ CASCADE = 4
 
 # path
 menuConfigPath = "config/menu/"
-cardsFolder = "res/cards/2/"
+cardsFolder = "res/cards/"
 menuResPath = "res/menu/"
 soundResPath = "res/sound/"
+settingsFile = "save/settings.json"

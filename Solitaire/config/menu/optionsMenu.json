@@ -9,11 +9,15 @@
 	"content":{
 		"obj":"VBox",
 		"content":[
-			{"obj":"Selector1", "name":"piocheSelector", "pathList":["1carte","3cartes"], "default":1, "offset":30},
-			{"obj":"Carousel", "name":"themeSelector", "pathList":["classic", "saison", "fantasy"], "default":1},
+			{"obj":"Selector1", "name":"piocheSelector", "options":[
+																{"path":"1carte.png", "value":1},
+																{"path":"3cartes.png", "value":3}
+															],
+				"default":1, "offset":30},
+			{"obj":"Carousel", "name":"themeSelector", "options":["classic", "saison", "fantasy", "element"], "default":2, "offset":30},
 			{"obj":"HBox", "content":[
-				{"obj":"Button", "name":"options"},
-				{"obj":"Button", "name":"exit"}
+				{"obj":"Button", "path":"options.png", "name":"save"},
+				{"obj":"Button", "path":"exit.png", "name":"exit"}
 			]}
 		]
 	}

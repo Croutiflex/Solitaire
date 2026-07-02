@@ -9,8 +9,8 @@
 	"content":{
 		"obj":"VBox",
 		"content":[
-			{"obj":"Button", "name":"replay"},
-			{"obj":"Button", "name":"exit"}
+			{"obj":"Button", "path":"replay.png", "name":"replay"},
+			{"obj":"Button", "path":"exit.png", "name":"exit"}
 		]
 	}
 }

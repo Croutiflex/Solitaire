@@ -63,18 +63,18 @@ class StandardMenu():
 					x += l
 
 	def parseElem(self, elem, rect):
+		ofs = elem["offset"] if "offset" in elem else 0
 		match elem["obj"]:
 			case "Selector1":
-				ofs = elem["offset"] if "offset" in elem else 0
-				selector = Selector1(elem["pathList"], rect, offset=ofs, basePath=menuResPath, name=elem["name"], default=elem["default"])
+				selector = Selector1(elem["options"], rect, offset=ofs, basePath=menuResPath, name=elem["name"], default=elem["default"])
 				self.selectors.append(selector)
 				self.drawables.add(selector)
 			case "Button":
-				button = Button(menuResPath+elem["name"]+".png", autoFillRect=rect, name=elem["name"])
+				button = Button(menuResPath+elem["path"], autoFillRect=rect, name=elem["name"])
 				self.buttons.append(button)
 				self.drawables.add(button)
 			case "Carousel":
-				carousel = Carousel(elem["pathList"], rect, basePath=menuResPath, name=elem["name"], default=elem["default"])
+				carousel = Carousel(elem["options"], rect, offset=ofs, basePath=menuResPath, name=elem["name"], default=elem["default"])
 				self.selectors.append(carousel)
 				self.drawables.add(carousel)
 
@@ -84,6 +84,11 @@ class StandardMenu():
 		for s in self.selectors:
 			ret[s.name] = s.selectedOpt
 		return ret
+
+	def setDefaultSelected(self, selection):
+		for s in self.selectors:
+			if s.name in selection:
+				s.setSelectedOpt(selection[s.name])
 
 	# renvoie le nom du bouton qui a été cliqué, None si aucun
 	def click(self):

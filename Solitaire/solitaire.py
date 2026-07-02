@@ -3,6 +3,7 @@ from properties import *
 from card import *
 from utils import *
 import random
+import json
 
 # position des cartes
 y1 = cardH + 2*space3
@@ -11,21 +12,26 @@ pilePos = [(hiddenPilePos[i][0], hiddenPilePos[i][1] + i*space1) for i in range(
 acePilePos = [(W - space4 - cardW - i*(space3 + cardW), space3) for i in range(4)]
 handPos = (space4 + cardW + space2, space3)
 
-# pioche
-back = pg.image.load(cardsFolder + "back.png")
-allCards = [Card(i+1, back, cardSize) for i in range(52)]
-allCardsGroup = pg.sprite.Group(allCards)
-
 class Solitaire():
 	def __init__(self):
-		# self.backgroundColor = randomColor(high=200)
-		self.background = pg.transform.smoothscale(pg.image.load("res/background/1.png"), screenSize)
+		file = open(settingsFile, 'r')
+		settings = json.load(file)
+		file.close()
+		theme = settings["theme"]
+		self.theme = theme
+		self.background = pg.transform.smoothscale(pg.image.load("res/background/"+theme+".png"), screenSize)
 		self.cheatEnabled = False
-		self.dealMode = 3 # piocher 1 ou 3 cartes à la fois?
-		for c in allCards:
+		self.dealMode = settings["nPioche"] # piocher 1 ou 3 cartes à la fois?
+		# chargement des cartes
+		cardPath = cardsFolder+theme+"/"
+		back = pg.image.load(cardPath+"back.png")
+		self.allCards = [Card(i+1, cardPath, back, cardSize) for i in range(52)]
+		self.allCardsGroup = pg.sprite.Group(self.allCards)
+		for c in self.allCards:
 			c.hide()
 			c._layer = 0
-		self.deck = CardPile("deck", (space4, space3), cards=allCards)
+		# pioche
+		self.deck = CardPile("deck", (space4, space3), cards=self.allCards)
 		self.deckHL = ColorRect(white, cardW+2*space5, cardH+2*space5, pos=self.deck.cards[0].rect.center)
 		self.reserve = []
 		self.hand = CardPile3("hand", handPos, offset=(space3, 0), limit=1)
@@ -46,6 +52,41 @@ class Solitaire():
 		# démarrage de la distribution
 		self.deal()
 
+	def applySettings(self, options):
+		# load settings
+		file = open(settingsFile, 'r')
+		settings = json.load(file)
+		file.close()
+		# change dealmode
+		reset = False
+		updateSettings = False
+		n = options["piocheSelector"]
+		if self.dealMode != n:
+			settings["nPioche"] = n
+			self.dealMode = n
+			reset = True
+			updateSettings = True
+		# change theme
+		newTheme = options["themeSelector"]
+		if newTheme != self.theme:
+			settings["theme"] = newTheme
+			self.theme = newTheme
+			updateSettings = True
+			self.background = pg.transform.smoothscale(pg.image.load("res/background/"+newTheme+".png"), screenSize)
+			cardPath = cardsFolder+newTheme+"/"
+			back = pg.image.load(cardPath+"back.png")
+			for c in self.allCards:
+				c.setTheme(newTheme, back)
+			# self.allCardsGroup = pg.sprite.Group(self.allCards)
+		# save new settings
+		if updateSettings:
+			file = open(settingsFile, 'w')
+			json.dump(settings, file)
+			file.close()
+		# reset game if necessary
+		if reset:
+			self.reset()
+
 	def toggleCheat(self):
 		if self.cheatEnabled:
 			self.cheatEnabled = False
@@ -56,13 +97,16 @@ class Solitaire():
 
 	# redistribuer
 	def reset(self):
-		for c in allCards:
+		for c in self.allCards:
 			c._layer = 0
 		for p in self.activePiles + self.hiddenPiles + [self.hand]:
 			p.empty()
-		for c in allCards:
+		for c in self.allCards:
 			c.hide()
-		self.deck = CardPile("deck", (space4, space3), cards=allCards)
+			c.resetAnimation()
+		self.deck = CardPile("deck", (space4, space3), cards=self.allCards)
+		self.movingCard = None
+		self.movingPile = None
 		self.deal()
 
 	# pour les éventuelles actions à faire en fin de partie
@@ -345,7 +389,7 @@ class Solitaire():
 		return False
 
 	def update(self):
-		allCardsGroup.update()
+		self.allCardsGroup.update()
 		match self.phase:
 			case 0: # distribution
 				if self.movingCard == None: # pas de carte qui bouge

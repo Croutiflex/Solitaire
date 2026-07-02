@@ -19,6 +19,7 @@ def main():
 	menuL = StandardMenu("defeatMenu.json")
 	pauseMenu = StandardMenu("pauseMenu.json")
 	optionsMenu = StandardMenu("optionsMenu.json")
+	optionsMenu.setDefaultSelected({"piocheSelector":game.dealMode, "themeSelector":game.theme})
 	activeMenu = None
 
 	# test __________________________
@@ -92,12 +93,9 @@ def main():
 										case "exit":
 											game.draw(screen)
 											mode = "menuPause"
-										case "options":
+										case "save":
 											mode = "game"
-											game = Solitaire()
-											opt = optionsMenu.getSelected()
-											game.dealMode = 1 if opt["piocheSelector"] == "1carte" else 3
-											print("thème : ", opt["themeSelector"])
+											game.applySettings(optionsMenu.getSelected())
 						case pg.KEYDOWN:
 							match event.key:
 								case pg.K_ESCAPE:

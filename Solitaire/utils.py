@@ -148,24 +148,29 @@ class Selector1(BasicSprite):
 		size = rect.size
 		super().__init__(pg.Surface(size), size=size, pos=rect.topleft)
 		optSize = ((size[0]-(len(optList)-1)*space5)/len(optList), (size[1]-offset)/2)
-		self.options = [Button(basePath+optList[i]+".png", size=optSize, pos=(i*(optSize[0]+space5), offset), name=optList[i]) for i in range(len(optList))]
+		self.options = [Button(basePath+optList[i]["path"], size=optSize, pos=(i*(optSize[0]+space5), offset)) for i in range(len(optList))]
+		self.values = [opt["value"] for opt in optList]
 		indicatorSize = (optSize[0]-2*space5, optSize[1]-space5)
 		self.indicatorPos = [(self.options[i].rect.left+space5, optSize[1]+offset+space5) for i in range(len(optList))]
 		self.indicator = BasicSprite(pg.image.load(basePath+"applique.png"), size=indicatorSize, pos=self.indicatorPos[default])
 		self.background = BasicSprite(pg.image.load(basePath+name+".png"), size=size)
 		self.drawables = pg.sprite.RenderUpdates([self.background] + self.options + [self.indicator])
-		self.selectedOpt = self.options[default].name
+		self.selectedOpt = self.values[default]
+	def setSelectedOpt(self, opt):
+		i = 0
+		for v in self.values:
+			if opt == v:
+				self.selectedOpt = opt
+				self.indicator.move(self.indicatorPos[i])
+			i += 1
 	def click(self):
 		i = 0
 		for opt in self.options:
 			if opt.isPressed:
-				self.selectedOpt = opt.name
+				self.selectedOpt = self.values[i]
 				self.indicator.move(self.indicatorPos[i])
-				print("Option "+self.selectedOpt+" sélectionnée")
-				return self.selectedOpt
+				self.selectedOpt
 			i += 1
-		self.selectedOpt = None
-		return self.selectedOpt
 	def update(self):
 		self.drawables.update(mouseOffSet=(-self.rect.left,-self.rect.top))
 		self.image.fill("black")
@@ -184,15 +189,16 @@ class Carousel(BasicSprite):
 		(w,h) = rect.size
 		if w/h > sizeRatio:
 			c = rect.center
-			rect.w = 5*h
+			rect.w = sizeRatio*h
 			rect.center = c
 		else:
 			c = rect.center
-			rect.h = w/5
+			rect.h = w/sizeRatio
 			rect.center = c
 		super().__init__(pg.Surface(rect.size), size=rect.size, pos=rect.topleft)
+		self.background = BasicSprite(pg.image.load(basePath+name+".png"), size=rect.size)
 		img = pg.image.load(basePath+optList[0]+".png")
-		img2 = pg.transform.scale_by(img, self.rect.h/img.get_rect().h)
+		img2 = pg.transform.scale_by(img, (self.rect.h-offset)/img.get_rect().h)
 		self.largeOptSize = img2.get_rect().size
 		self.smallOptSize = (self.largeOptSize[0]/2, self.largeOptSize[1]/2)
 		# Options affichées
@@ -200,20 +206,22 @@ class Carousel(BasicSprite):
 		self.optionsImg = [pg.image.load(basePath+opt+".png") for opt in optList]
 		self.selectedOptIndex = default
 		self.selectedOpt = self.options[default]
+		cy = (self.rect.h-offset)/2+offset
+		dx = self.rect.h-offset
 		self.centerOpt = BasicSprite(self.optionsImg[getIndexInRange(len(self.options), default)], size=self.largeOptSize)
-		self.centerOpt.moveCenter((self.rect.w/2, self.rect.h/2))
+		self.centerOpt.moveCenter((self.rect.w/2, cy))
 		self.leftOpt = BasicSprite(self.optionsImg[getIndexInRange(len(self.options), default-1)], size=self.smallOptSize)
-		self.leftOpt.moveCenter((self.rect.w/2 - self.rect.h, self.rect.h/2))
+		self.leftOpt.moveCenter((self.rect.w/2 - dx, cy))
 		self.rightOpt = BasicSprite(self.optionsImg[getIndexInRange(len(self.options), default+1)], size=self.smallOptSize)
-		self.rightOpt.moveCenter((self.rect.w/2 + self.rect.h, self.rect.h/2))
-		self.drawables = pg.sprite.RenderUpdates([self.rightOpt, self.leftOpt, self.centerOpt])
+		self.rightOpt.moveCenter((self.rect.w/2 + dx, cy))
+		self.drawables = pg.sprite.RenderUpdates([self.background, self.rightOpt, self.leftOpt, self.centerOpt])
 		# boutons flèches
 		bh = self.rect.h/2
 		self.leftBt = Button(basePath+"left.png", (bh,bh), name="left")
-		self.leftBt.rect.centery = self.rect.h/2
+		self.leftBt.rect.centery = cy
 		self.leftBt.rect.left = 0
 		self.rightBt = Button(basePath+"right.png", (bh,bh), name="right")
-		self.rightBt.rect.centery = self.rect.h/2
+		self.rightBt.rect.centery = cy
 		self.rightBt.rect.right = self.rect.w
 		self.drawables.add([self.rightBt, self.leftBt])
 	def incrementIndex(self, inc):
@@ -223,6 +231,11 @@ class Carousel(BasicSprite):
 		self.centerOpt.setImage(self.optionsImg[self.selectedOptIndex])
 		self.rightOpt.setImage(self.optionsImg[getIndexInRange(len(self.options), self.selectedOptIndex+1)])
 		self.selectedOpt = self.options[self.selectedOptIndex]
+	def setSelectedOpt(self, optName):
+		for i in range(len(self.options)):
+			if self.options[i] == optName:
+				self.selectedOptIndex = i
+				self.updateOpt()
 	def click(self):
 		if self.leftBt.isPressed:
 			self.incrementIndex(-1)
@@ -232,7 +245,6 @@ class Carousel(BasicSprite):
 			self.updateOpt()
 	def update(self):
 		self.drawables.update(mouseOffSet=(-self.rect.left,-self.rect.top))
-		self.image.fill("black")
 		self.drawables.draw(self.image)
 	def draw(self, screen):
 		super().draw(screen)
