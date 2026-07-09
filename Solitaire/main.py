@@ -15,6 +15,7 @@ def main():
 
 	mode = "game"
 	game = Solitaire()
+	stats = game.getStats()
 	menuV = StandardMenu("victoryMenu.json")
 	menuL = StandardMenu("defeatMenu.json")
 	pauseMenu = StandardMenu("pauseMenu.json")
@@ -54,8 +55,14 @@ def main():
 								case pg.K_TAB:
 									game.toggleCheat()
 				if game.phase == END:
+					stats["totalGames"] += 1
 					mode = "menuEnd"
-					activeMenu = menuV if game.isWon else menuL
+					if game.isWon:
+						activeMenu = menuV 
+						stats["victories"] += 1
+					else:
+						activeMenu = menuL
+					game.saveStats(stats)
 				elif game.phase == CASCADE:
 					mode = "cascade"
 			case "menuPause":

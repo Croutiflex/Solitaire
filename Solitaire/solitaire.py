@@ -87,6 +87,17 @@ class Solitaire():
 		if reset:
 			self.reset()
 
+	def getStats():
+		file = open(statsFile, 'r')
+		stats = json.load(file)
+		file.close()
+		return stats
+
+	def saveStats(stats):
+		file = open(statsFile, 'w')
+		json.dump(stats, file)
+		file.close()
+
 	def toggleCheat(self):
 		if self.cheatEnabled:
 			self.cheatEnabled = False

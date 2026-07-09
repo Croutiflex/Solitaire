@@ -1,8 +1,18 @@
 Fonctionnalités à implémenter
 
-must have:
-- menu pause & choix apparence
-	- sauvegarde dernière apparence
-
 could have:
 - sauvegarde
+- stats :
+	- total des parties
+	- score : 
+		- afficher
+		- sauvegarder pour stats
+		- popup score en fin de partie (victoire)
+	- nbre de victoires + ratio %
+	- meilleur score
+- option : taille de la fenêtre
+
+Modifs/bug fix :
+- cascade multiples
+- bug affichage pile par dessus la cascade
+- bug dernière carte cascadée encore visible à la fin
