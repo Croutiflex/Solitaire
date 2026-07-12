@@ -57,13 +57,11 @@ def main():
 				if game.phase == END:
 					stats["totalGames"] += 1
 					mode = "menuEnd"
-					if game.isWon:
-						activeMenu = menuV 
-						stats["victories"] += 1
-					else:
-						activeMenu = menuL
+					activeMenu = menuL
 					game.saveStats(stats)
 				elif game.phase == CASCADE:
+					for p in game.acePiles:
+						p.draw(screen)
 					mode = "cascade"
 			case "menuPause":
 				pauseMenu.update()
@@ -132,12 +130,14 @@ def main():
 					match event.type:
 						case pg.QUIT: running = False
 						case pg.KEYDOWN:
-							mode = "menuEnd"
-							activeMenu = menuV
-							game.cleanup()
+							game.phase = END
 				if game.phase == END:
 					mode = "menuEnd"
 					activeMenu = menuV
+					stats["totalGames"] += 1
+					stats["victories"] += 1
+					game.saveStats(stats)
+					game.cleanup()
 			case "test":
 				carousel.update()
 				carousel.draw(screen)

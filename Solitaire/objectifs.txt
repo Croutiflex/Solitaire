@@ -13,6 +13,6 @@ could have:
 - option : taille de la fenêtre
 
 Modifs/bug fix :
-- cascade multiples
+- cascades multiples
 - bug affichage pile par dessus la cascade
 - bug dernière carte cascadée encore visible à la fin

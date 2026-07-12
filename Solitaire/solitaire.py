@@ -87,13 +87,13 @@ class Solitaire():
 		if reset:
 			self.reset()
 
-	def getStats():
+	def getStats(self):
 		file = open(statsFile, 'r')
 		stats = json.load(file)
 		file.close()
 		return stats
 
-	def saveStats(stats):
+	def saveStats(self, stats):
 		file = open(statsFile, 'w')
 		json.dump(stats, file)
 		file.close()
@@ -449,8 +449,6 @@ class Solitaire():
 
 	def draw(self, screen):
 		if self.phase == CASCADE:
-			for p in self.acePiles:
-				p.draw(screen)
 			self.movingCard.draw(screen)
 			return
 		screen.blit(self.background, (0,0))
