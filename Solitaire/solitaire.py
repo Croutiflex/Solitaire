@@ -56,6 +56,63 @@ class Solitaire():
 		# démarrage de la distribution
 		self.deal()
 
+	# sauvegarder la partie
+	def save(self):
+		save = {}
+		save["score"] = self.score
+		save["deck"] = [c.Id for c in self.deck.cards]
+		save["hand"] = [c.Id for c in self.hand.cards]
+		save["reserve"] = [c.Id for c in self.reserve]
+		for i in range(7):
+			save["p"+str(i)] = [c.Id for c in self.piles[i].cards]
+			save["hp"+str(i)] = [c.Id for c in self.hiddenPiles[i].cards]
+		for i in range(4):
+			save["ace"+str(i)] = [c.Id for c in self.acePiles[i].cards]
+		file = open(saveFile, 'w')
+		json.dump(save, file)
+		file.close()
+
+	def load(self):
+		file = open(saveFile, 'r')
+		save = json.load(file)
+		file.close()
+		# reset
+		cardPath = cardsFolder+self.theme+"/"
+		back = pg.image.load(cardPath+"back.png")
+		self.allCards = [Card(i+1, cardPath, back, cardSize) for i in range(52)]
+		self.allCardsGroup = pg.sprite.Group(self.allCards)
+		for c in self.allCards:
+			c.hide()
+			c._layer = 0
+			c.resetAnimation()
+		for p in self.activePiles + self.hiddenPiles + [self.hand]:
+			p.empty()
+		self.hand.empty()
+		self.movingCard = None
+		self.movingPile = None
+		# load
+		self.deck = CardPile("deck", (space4, space3), cards=[self.allCards[Id-1] for Id in save["deck"]])
+		for c in [self.allCards[Id-1] for Id in save["hand"]]:
+			c.show()
+			self.hand.add(c)
+		self.reserve = [self.allCards[Id-1] for Id in save["reserve"]]
+		for i in range(7):
+			for c in [self.allCards[Id-1] for Id in save["hp"+str(i)]]:
+				self.hiddenPiles[i].add(c)
+			p = [Card(Id, cardPath, back, cardSize) for Id in save["p"+str(i)]]
+			p[0].show()
+			p[0].move(self.hiddenPiles[i].nextCardPos)
+			self.piles[i].add(p[0], updatePos=True)
+			for c in p[1:]:
+				c.show()
+				self.piles[i].add(c)
+		for i in range(4):
+			for c in [self.allCards[Id-1] for Id in save["ace"+str(i)]]:
+				c.show()
+				self.acePiles[i].add(c)
+		self.updateScore(save["score"])
+		self.phase = GAME
+
 	def applySettings(self, options):
 		# load settings
 		file = open(settingsFile, 'r')
@@ -158,7 +215,7 @@ class Solitaire():
 				return False
 			a = A.cards[0]
 			if len(B) == 0:
-				return a.value == 1
+				return a.value == 1 and 3-a.color == self.acePiles.index(B)
 			b = B.cards[-1]
 			return a.color == b.color and a.value == b.value + 1
 		elif B.type == "normal":

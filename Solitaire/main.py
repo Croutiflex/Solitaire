@@ -80,6 +80,12 @@ def main():
 											mode = "menuOptions"
 										case "reprendre":
 											mode = "game"
+										case "save":
+											game.save()
+											print("partie sauvegardée!")
+										case "load":
+											game.load()
+											mode = "game"
 										case "exit":
 											running = False
 						case pg.KEYDOWN:

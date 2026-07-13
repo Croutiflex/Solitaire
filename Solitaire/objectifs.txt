@@ -2,17 +2,8 @@ Fonctionnalités à implémenter
 
 could have:
 - sauvegarde
-- stats :
-	- total des parties
-	- score : 
-		- afficher
-		- sauvegarder pour stats
-		- popup score en fin de partie (victoire)
-	- nbre de victoires + ratio %
-	- meilleur score
 - option : taille de la fenêtre
 
 Modifs/bug fix :
 - cascades multiples
-- bug affichage pile par dessus la cascade
 - bug dernière carte cascadée encore visible à la fin
