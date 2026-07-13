@@ -136,6 +136,13 @@ def main():
 					activeMenu = menuV
 					stats["totalGames"] += 1
 					stats["victories"] += 1
+					menuV.setText("textTotalGames", "Parties jouées : "+str(stats["totalGames"]))
+					vicRate = int(100*stats["victories"]/stats["totalGames"])
+					menuV.setText("textVictoryRate", "Victoires : "+str(stats["victories"])+" ("+str(vicRate)+"%)")
+					if game.score > stats["bestScore"]:
+						stats["bestScore"] = game.score
+					menuV.setText("textCurrentScore", "Score : "+str(game.score))
+					menuV.setText("textBestScore", "Meilleur score : "+str(stats["bestScore"]))
 					game.saveStats(stats)
 					game.cleanup()
 			case "test":

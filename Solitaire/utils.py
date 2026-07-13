@@ -45,6 +45,18 @@ class ColorRect(BasicSprite):
 	def set_color(self,color):
 		self.image.fill(color)
 
+class TextSprite(BasicSprite):
+	def __init__(self,text,size,backgroundColor=None,textColor="black",pos=(0,0)):
+		self.font = pg.font.Font('freesansbold.ttf', max(int(size[1]), 25))
+		self.backgroundColor = backgroundColor
+		self.textColor = textColor
+		super().__init__(pg.Surface(size))
+		self.moveCenter(pos)
+		self.setText(text)
+	def setText(self, text):
+		self.image = self.font.render(text, True, self.textColor, self.backgroundColor)
+		self.rect = self.image.get_rect(center=self.rect.center)
+
 # a sprite that can be animated to move in a straight line to a given destination
 class SpriteWithTL(BasicSprite):
 	def __init__(self,image,layer=0,size=None,pos=(0,0)):

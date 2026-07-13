@@ -49,6 +49,10 @@ class Solitaire():
 		self.isWon = False
 		self.noMoreDeckMoves = False
 		self.lastDeckLen = len(self.deck)
+		# score
+		self.score = 1000
+		self.scoreDisplay = TextSprite("Score : "+str(self.score), (2*space4, space3-2*space5))
+		self.scoreDisplay.move((0,0))
 		# démarrage de la distribution
 		self.deal()
 
@@ -118,7 +122,12 @@ class Solitaire():
 		self.deck = CardPile("deck", (space4, space3), cards=self.allCards)
 		self.movingCard = None
 		self.movingPile = None
+		self.updateScore(1000)
 		self.deal()
+
+	def updateScore(self, score):
+		self.score = score
+		self.scoreDisplay.setText("Score : "+str(score))
 
 	# pour les éventuelles actions à faire en fin de partie
 	def cleanup(self):
@@ -227,6 +236,7 @@ class Solitaire():
 				self.deck.add(c)
 			self.reserve = []
 			self.lastDeckLen = len(self.deck)
+			self.updateScore(self.score-25)
 		else :
 			# vider la main dans la réserve
 			self.reserve += self.hand.cards
@@ -319,11 +329,14 @@ class Solitaire():
 				self.pileUnderMouse.add(c)
 			if self.originPile.type == "normal" and len(self.originPile) == 0: # découvrir une carte si la pile d'origine (non as) est vide
 				self.discover(self.originPile)
-			elif self.originPile.type == "hand" and len(self.hand) == 0: # si on vide la main, ajouter la carte suivante
-				c = self.deck.pick()
-				if c != None:
-					c.show()
-					self.hand.add(c)
+			elif self.originPile.type == "hand":
+				self.checkForRookieMistake()
+				if len(self.hand) == 0: # si on vide la main, ajouter la carte suivante
+					c = self.deck.pick()
+					if c != None:
+						c.show()
+						self.hand.add(c)
+						self.updateScore(self.score+5)
 		else: # retour à l'envoyeur
 			for c in self.movingPile.cards:
 				self.originPile.add(c)
@@ -368,18 +381,29 @@ class Solitaire():
 			if A.type == "normal" and len(A) == 0: # découvrir une carte si la pile d'origine (non as) est vide
 				self.discover(A)
 			elif A.type == "hand":
+				self.checkForRookieMistake()
 				self.hand.drawables.remove(self.hand.HL)
 				if len(self.hand) == 0: # si on vide la main, ajouter la carte suivante
 					c = self.deck.pick()
 					if c != None:
 						c.show()
 						self.hand.add(c)
+						self.updateScore(self.score+5)
 			def f1():
 				dest.add(self.movingCard)
 				self.movingCard = None
 			self.movingCard.animate(dest.nextCardPos, onDone=f1, duration=slideTime2)
 			return
 		return
+
+	# appliquer un malus de score si le joueur pioche alors qu'il reste des actions sur la table
+	def checkForRookieMistake(self):
+		for A in self.piles:
+			if len(A) > 0 and (len(self.hiddenPiles[self.piles.index(A)]) > 0 or A.cards[0].value != 13):
+				for B in self.activePiles:
+					if B != A and self.isMoveAllowed(A, B):
+						self.updateScore(self.score-10)
+						return
 
 	def discover(self, pile):
 		hp = self.hiddenPiles[self.piles.index(pile)]
@@ -452,6 +476,7 @@ class Solitaire():
 			self.movingCard.draw(screen)
 			return
 		screen.blit(self.background, (0,0))
+		self.scoreDisplay.draw(screen)
 		if self.pileUnderMouse == self.deck:
 			self.deckHL.draw(screen)
 		for p in self.acePiles + [self.hand, self.deck]:

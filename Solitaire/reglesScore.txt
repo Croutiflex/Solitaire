@@ -1,7 +1,6 @@
 Règles de calcul du score :
 
-descendre un carte depuis pile as : -10
-monter sur pile as : +10
-reset la pioche : -x
-sortir une carte de la pioche : +5
-révéler une carte : +5
+total de base : 1000
+reset la pioche : -25
+piocher avec move possible : -10
+combo pioche : +5
