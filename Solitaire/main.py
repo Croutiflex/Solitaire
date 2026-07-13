@@ -15,6 +15,7 @@ def main():
 
 	mode = "game"
 	game = Solitaire()
+	stats = game.getStats()
 	menuV = StandardMenu("victoryMenu.json")
 	menuL = StandardMenu("defeatMenu.json")
 	pauseMenu = StandardMenu("pauseMenu.json")
@@ -54,9 +55,13 @@ def main():
 								case pg.K_TAB:
 									game.toggleCheat()
 				if game.phase == END:
+					stats["totalGames"] += 1
 					mode = "menuEnd"
-					activeMenu = menuV if game.isWon else menuL
+					activeMenu = menuL
+					game.saveStats(stats)
 				elif game.phase == CASCADE:
+					for p in game.acePiles:
+						p.draw(screen)
 					mode = "cascade"
 			case "menuPause":
 				pauseMenu.update()
@@ -74,6 +79,12 @@ def main():
 											game.draw(screen)
 											mode = "menuOptions"
 										case "reprendre":
+											mode = "game"
+										case "save":
+											game.save()
+											print("partie sauvegardée!")
+										case "load":
+											game.load()
 											mode = "game"
 										case "exit":
 											running = False
@@ -125,12 +136,21 @@ def main():
 					match event.type:
 						case pg.QUIT: running = False
 						case pg.KEYDOWN:
-							mode = "menuEnd"
-							activeMenu = menuV
-							game.cleanup()
+							game.phase = END
 				if game.phase == END:
 					mode = "menuEnd"
 					activeMenu = menuV
+					stats["totalGames"] += 1
+					stats["victories"] += 1
+					menuV.setText("textTotalGames", "Parties jouées : "+str(stats["totalGames"]))
+					vicRate = int(100*stats["victories"]/stats["totalGames"])
+					menuV.setText("textVictoryRate", "Victoires : "+str(stats["victories"])+" ("+str(vicRate)+"%)")
+					if game.score > stats["bestScore"]:
+						stats["bestScore"] = game.score
+					menuV.setText("textCurrentScore", "Score : "+str(game.score))
+					menuV.setText("textBestScore", "Meilleur score : "+str(stats["bestScore"]))
+					game.saveStats(stats)
+					game.cleanup()
 			case "test":
 				carousel.update()
 				carousel.draw(screen)

@@ -1,18 +1,22 @@
 {
-	"size":[0.6, 0.6],
+	"size":[0.6, 0.8],
 	"background":{
 		"type":"plain",
 		"value":"random"
 	},
 	"title":"Pause",
 	"content":{
-		"obj":"HBox",
+		"obj":"VBox",
 		"content":[
-			{"obj":"VBox", "content":[
+			{"obj":"HBox", "content":[
 				{"obj":"Button", "path":"optionsY.png", "name":"options"},
 				{"obj":"Button", "path":"reprendre.png", "name":"reprendre"}
 			]},
-			{"obj":"VBox", "content":[
+			{"obj":"HBox", "content":[
+				{"obj":"Button", "path":"boutonSave.png", "name":"save"},
+				{"obj":"Button", "path":"loadgame.png", "name":"load"}
+			]},
+			{"obj":"HBox", "content":[
 				{"obj":"Button", "path":"newgameY.png", "name":"replay"},
 				{"obj":"Button", "path":"exitY.png", "name":"exit"}
 			]}

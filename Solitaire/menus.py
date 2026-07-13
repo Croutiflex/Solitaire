@@ -20,6 +20,7 @@ class StandardMenu():
 		self.drawables.add(self.background)
 		self.buttons = []
 		self.selectors = []
+		self.texts = {}
 		self.setContent(config["content"])
 
 	def setBackground(self, bgconfig):
@@ -77,6 +78,10 @@ class StandardMenu():
 				carousel = Carousel(elem["options"], rect, offset=ofs, basePath=menuResPath, name=elem["name"], default=elem["default"])
 				self.selectors.append(carousel)
 				self.drawables.add(carousel)
+			case "Text":
+				txt = TextSprite(elem["value"], rect.size, pos=rect.center)
+				self.texts[elem["name"]] = txt
+				self.drawables.add(txt)
 
 	# renvoie l'état des sélecteurs sous forme de dico
 	def getSelected(self):
@@ -89,6 +94,13 @@ class StandardMenu():
 		for s in self.selectors:
 			if s.name in selection:
 				s.setSelectedOpt(selection[s.name])
+
+	# change la valeur d'une balise texte du menu
+	def setText(self, name, value):
+		if name in self.texts:
+			self.texts[name].setText(value)
+		else:
+			print("Erreur : la balise ", name, " n'existe pas dans le menu ", self.name)
 
 	# renvoie le nom du bouton qui a été cliqué, None si aucun
 	def click(self):

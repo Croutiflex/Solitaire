@@ -49,8 +49,69 @@ class Solitaire():
 		self.isWon = False
 		self.noMoreDeckMoves = False
 		self.lastDeckLen = len(self.deck)
+		# score
+		self.score = 1000
+		self.scoreDisplay = TextSprite("Score : "+str(self.score), (2*space4, space3-2*space5))
+		self.scoreDisplay.move((0,0))
 		# démarrage de la distribution
 		self.deal()
+
+	# sauvegarder la partie
+	def save(self):
+		save = {}
+		save["score"] = self.score
+		save["deck"] = [c.Id for c in self.deck.cards]
+		save["hand"] = [c.Id for c in self.hand.cards]
+		save["reserve"] = [c.Id for c in self.reserve]
+		for i in range(7):
+			save["p"+str(i)] = [c.Id for c in self.piles[i].cards]
+			save["hp"+str(i)] = [c.Id for c in self.hiddenPiles[i].cards]
+		for i in range(4):
+			save["ace"+str(i)] = [c.Id for c in self.acePiles[i].cards]
+		file = open(saveFile, 'w')
+		json.dump(save, file)
+		file.close()
+
+	def load(self):
+		file = open(saveFile, 'r')
+		save = json.load(file)
+		file.close()
+		# reset
+		cardPath = cardsFolder+self.theme+"/"
+		back = pg.image.load(cardPath+"back.png")
+		self.allCards = [Card(i+1, cardPath, back, cardSize) for i in range(52)]
+		self.allCardsGroup = pg.sprite.Group(self.allCards)
+		for c in self.allCards:
+			c.hide()
+			c._layer = 0
+			c.resetAnimation()
+		for p in self.activePiles + self.hiddenPiles + [self.hand]:
+			p.empty()
+		self.hand.empty()
+		self.movingCard = None
+		self.movingPile = None
+		# load
+		self.deck = CardPile("deck", (space4, space3), cards=[self.allCards[Id-1] for Id in save["deck"]])
+		for c in [self.allCards[Id-1] for Id in save["hand"]]:
+			c.show()
+			self.hand.add(c)
+		self.reserve = [self.allCards[Id-1] for Id in save["reserve"]]
+		for i in range(7):
+			for c in [self.allCards[Id-1] for Id in save["hp"+str(i)]]:
+				self.hiddenPiles[i].add(c)
+			p = [Card(Id, cardPath, back, cardSize) for Id in save["p"+str(i)]]
+			p[0].show()
+			p[0].move(self.hiddenPiles[i].nextCardPos)
+			self.piles[i].add(p[0], updatePos=True)
+			for c in p[1:]:
+				c.show()
+				self.piles[i].add(c)
+		for i in range(4):
+			for c in [self.allCards[Id-1] for Id in save["ace"+str(i)]]:
+				c.show()
+				self.acePiles[i].add(c)
+		self.updateScore(save["score"])
+		self.phase = GAME
 
 	def applySettings(self, options):
 		# load settings
@@ -87,6 +148,17 @@ class Solitaire():
 		if reset:
 			self.reset()
 
+	def getStats(self):
+		file = open(statsFile, 'r')
+		stats = json.load(file)
+		file.close()
+		return stats
+
+	def saveStats(self, stats):
+		file = open(statsFile, 'w')
+		json.dump(stats, file)
+		file.close()
+
 	def toggleCheat(self):
 		if self.cheatEnabled:
 			self.cheatEnabled = False
@@ -107,7 +179,12 @@ class Solitaire():
 		self.deck = CardPile("deck", (space4, space3), cards=self.allCards)
 		self.movingCard = None
 		self.movingPile = None
+		self.updateScore(1000)
 		self.deal()
+
+	def updateScore(self, score):
+		self.score = score
+		self.scoreDisplay.setText("Score : "+str(score))
 
 	# pour les éventuelles actions à faire en fin de partie
 	def cleanup(self):
@@ -138,7 +215,7 @@ class Solitaire():
 				return False
 			a = A.cards[0]
 			if len(B) == 0:
-				return a.value == 1
+				return a.value == 1 and 3-a.color == self.acePiles.index(B)
 			b = B.cards[-1]
 			return a.color == b.color and a.value == b.value + 1
 		elif B.type == "normal":
@@ -216,6 +293,7 @@ class Solitaire():
 				self.deck.add(c)
 			self.reserve = []
 			self.lastDeckLen = len(self.deck)
+			self.updateScore(self.score-25)
 		else :
 			# vider la main dans la réserve
 			self.reserve += self.hand.cards
@@ -308,11 +386,14 @@ class Solitaire():
 				self.pileUnderMouse.add(c)
 			if self.originPile.type == "normal" and len(self.originPile) == 0: # découvrir une carte si la pile d'origine (non as) est vide
 				self.discover(self.originPile)
-			elif self.originPile.type == "hand" and len(self.hand) == 0: # si on vide la main, ajouter la carte suivante
-				c = self.deck.pick()
-				if c != None:
-					c.show()
-					self.hand.add(c)
+			elif self.originPile.type == "hand":
+				self.checkForRookieMistake()
+				if len(self.hand) == 0: # si on vide la main, ajouter la carte suivante
+					c = self.deck.pick()
+					if c != None:
+						c.show()
+						self.hand.add(c)
+						self.updateScore(self.score+5)
 		else: # retour à l'envoyeur
 			for c in self.movingPile.cards:
 				self.originPile.add(c)
@@ -357,18 +438,29 @@ class Solitaire():
 			if A.type == "normal" and len(A) == 0: # découvrir une carte si la pile d'origine (non as) est vide
 				self.discover(A)
 			elif A.type == "hand":
+				self.checkForRookieMistake()
 				self.hand.drawables.remove(self.hand.HL)
 				if len(self.hand) == 0: # si on vide la main, ajouter la carte suivante
 					c = self.deck.pick()
 					if c != None:
 						c.show()
 						self.hand.add(c)
+						self.updateScore(self.score+5)
 			def f1():
 				dest.add(self.movingCard)
 				self.movingCard = None
 			self.movingCard.animate(dest.nextCardPos, onDone=f1, duration=slideTime2)
 			return
 		return
+
+	# appliquer un malus de score si le joueur pioche alors qu'il reste des actions sur la table
+	def checkForRookieMistake(self):
+		for A in self.piles:
+			if len(A) > 0 and (len(self.hiddenPiles[self.piles.index(A)]) > 0 or A.cards[0].value != 13):
+				for B in self.activePiles:
+					if B != A and self.isMoveAllowed(A, B):
+						self.updateScore(self.score-10)
+						return
 
 	def discover(self, pile):
 		hp = self.hiddenPiles[self.piles.index(pile)]
@@ -438,11 +530,10 @@ class Solitaire():
 
 	def draw(self, screen):
 		if self.phase == CASCADE:
-			for p in self.acePiles:
-				p.draw(screen)
 			self.movingCard.draw(screen)
 			return
 		screen.blit(self.background, (0,0))
+		self.scoreDisplay.draw(screen)
 		if self.pileUnderMouse == self.deck:
 			self.deckHL.draw(screen)
 		for p in self.acePiles + [self.hand, self.deck]:

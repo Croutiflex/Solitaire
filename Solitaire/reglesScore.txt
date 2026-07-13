@@ -1,0 +1,6 @@
+Règles de calcul du score :
+
+total de base : 1000
+reset la pioche : -25
+piocher avec move possible : -10
+combo pioche : +5

@@ -9,8 +9,28 @@
 	"content":{
 		"obj":"VBox",
 		"content":[
-			{"obj":"Button", "path":"replay.png", "name":"replay"},
-			{"obj":"Button", "path":"exit.png", "name":"exit"}
+			{"obj":"VBox",
+				"content":[
+					{"obj":"HBox",
+						"content":[
+							{"obj":"Text", "name":"textTotalGames", "value":""},
+							{"obj":"Text", "name":"textVictoryRate", "value":""}
+						]
+					},
+					{"obj":"HBox",
+						"content":[
+							{"obj":"Text", "name":"textCurrentScore", "value":""},
+							{"obj":"Text", "name":"textBestScore", "value":""}
+						]
+					}
+				]
+			},
+			{"obj":"HBox",
+				"content":[
+					{"obj":"Button", "path":"replay.png", "name":"replay"},
+					{"obj":"Button", "path":"exit.png", "name":"exit"}
+				]
+			}
 		]
 	}
 }

@@ -1,6 +1,7 @@
 import pygame as pg
 import time
 import random
+import os
 from properties import *
 
 def isOutOfScreen(pos):
@@ -45,7 +46,19 @@ class ColorRect(BasicSprite):
 	def set_color(self,color):
 		self.image.fill(color)
 
-# a sprite that can be animated to move in a straight line to a given destination
+class TextSprite(BasicSprite):
+	def __init__(self,text,size,backgroundColor=None,textColor="black",pos=(0,0)):
+		self.font = pg.font.Font('freesansbold.ttf', max(int(size[1]), 25))
+		self.backgroundColor = backgroundColor
+		self.textColor = textColor
+		super().__init__(pg.Surface(size))
+		self.moveCenter(pos)
+		self.setText(text)
+	def setText(self, text):
+		self.image = self.font.render(text, True, self.textColor, self.backgroundColor)
+		self.rect = self.image.get_rect(center=self.rect.center)
+
+# a sprite that can be animated to move in a straight line to a given position
 class SpriteWithTL(BasicSprite):
 	def __init__(self,image,layer=0,size=None,pos=(0,0)):
 		super().__init__(image,layer=layer,size=size,pos=pos)
@@ -111,6 +124,8 @@ class Button(BasicSprite):
 			print("Erreur création Button : spécifier size ou autoFillRect")
 			return None
 		# autoFillRect : remplir un espace en préservant les proportions de l'image.
+		if not os.path.isfile(path):
+			path = dummyImg
 		if autoFillRect != None:
 			img1 = pg.image.load(path)
 			r = img1.get_rect()
@@ -138,7 +153,7 @@ class CloseButton(Button):
 	def __init__(self):
 		h2 = screenSize[1]/20
 		size = (h2, h2)
-		Button.__init__(self, "res/X.png", "res/X2.png", size, (screenSize[0] - h2*2, h2))
+		super().__init__(self, "res/X.png", size=size, pos=(screenSize[0] - h2*2, h2))
 
 # bouton amélioré permettant de choisir entre plusieurs options
 # optList = liste des options, chacune doit avoir une image du même nom dans basePath.
@@ -253,7 +268,11 @@ class Carousel(BasicSprite):
 # out : "button2.png"
 def getPushedButtonPath(path):
 	l = path.split(".")
-	return l[0]+"2."+l[1]
+	ret = l[0]+"2."+l[1]
+	if os.path.isfile(ret):
+		return ret
+	else:
+		return dummyImg
 
 def getIndexInRange(listLen, index):
 	if index < 0:
