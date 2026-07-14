@@ -1,7 +1,6 @@
 Fonctionnalités à implémenter
 
 could have:
-- sauvegarde
 - option : taille de la fenêtre
 
 Modifs/bug fix :
